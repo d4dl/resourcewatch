@@ -3,20 +3,23 @@
 <head lang="en">
     <meta charset="UTF-8"/>
     <title>ReactJS + Spring Data REST</title>
-    <script async="" data-main="/run.js" src="/bower_components/requirejs/require.js"></script>
     <link rel="stylesheet" href="/main.css" />
 </head>
 <body>
-    <!-- tag::logout[] -->
     <div>
         Hello, <span th:text="${#authentication.name}">user</span>.
         <form th:action="@{/logout}" method="post">
             <input type="submit" value="Log Out"/>
         </form>
     </div>
-    <!-- end::logout[] -->
+    <div id="app"></div>
 
-    <div id="react"></div>
+    <script>
+        // Set to 'true' to activate logged-in routes
+        user = false;
+    </script>
+
+    <script src="app.js"></script>
 
 </body>
 </html>

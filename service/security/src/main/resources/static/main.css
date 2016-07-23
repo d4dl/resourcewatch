@@ -67,3 +67,28 @@ td, th {
 }
 
 .close:hover { background: #00d9ff; }
+
+
+/**
+ORIG Backgroiund
+#f8f8f8
+
+Background (body, .navbar-default)
+#d2ecd3
+OR
+#d8f8d8
+
+.sidebar ul li {
+    border-bottom: 1px solid #6a6f67;
+    border-top: 1px solid #d6ffc2;
+}
+
+.sidebar ul li a.active {
+    background-color: rgba(247,246,211,1);
+}
+
+.nav > li > a:hover, .nav > li > a:focus {
+    text-decoration: none;
+    background-color: rgba(247,246,211,1);
+}
+**/
