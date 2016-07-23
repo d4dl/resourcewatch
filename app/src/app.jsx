@@ -14,6 +14,8 @@ import Router from "react-router";
 // Base styling
 import "./common/styles/app.less";
 
+const root = '/api';
+
 // Routers
 import Routes from "./routers/Routes";
 

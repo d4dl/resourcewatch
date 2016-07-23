@@ -1,6 +1,5 @@
 # Build
-build/app.js
-build/style.css
+build
 
 # Logs
 logs
