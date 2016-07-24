@@ -5,6 +5,7 @@ import StompClient from '../../../../routers/websocket-listener';
 import Follow from '../../../../routers/follow';
 import Client from '../../../../routers/client';
 import When from 'when';
+import Employee from "../../../../components/domain/Employee"
 
 // const root = 'http://localhost:8080/api';
 const root = '/api';
