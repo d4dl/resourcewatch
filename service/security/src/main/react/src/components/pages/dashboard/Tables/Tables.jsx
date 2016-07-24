@@ -4,6 +4,8 @@ import {Pagination, Panel, Well, Button, PageHeader} from "react-bootstrap";
 import StompClient from '../../../../routers/websocket-listener';
 import Follow from '../../../../routers/follow';
 import Client from '../../../../routers/client';
+import When from 'when';
+
 // const root = 'http://localhost:8080/api';
 const root = '/api';
 
@@ -13,8 +15,14 @@ class Tables extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      pagesSize: 10
-    }
+      employees: [],
+      attributes: [],
+      page: 1,
+      pageSize: 2,
+      pagesSize: 10,
+      links: {}
+    };
+
   }
 
   componentDidMount() {
@@ -27,7 +35,7 @@ class Tables extends React.Component {
   }
 
   loadFromServer(pageSize) {
-    Follow(Client, root, [
+    var followed = Follow(Client, root, [
       {rel: 'employees', params: {size: pageSize}}]
     ).then(employeeCollection => {
       return Client({
@@ -64,8 +72,10 @@ class Tables extends React.Component {
           })
       );
     }).then(employeePromises => {
-      return when.all(employeePromises);
-    }).done(employees => {
+      return When.all(employeePromises);
+    });
+
+    followed.done(employees => {
       this.setState({
         page: this.page,
         employees: employees,
@@ -77,10 +87,10 @@ class Tables extends React.Component {
   }
   
   render() {
-    var pageInfo = this.props.page.hasOwnProperty("number") ?
-        <h3>Employees - Page {this.props.page.number + 1} of {this.props.page.totalPages}</h3> : null;
+    //var pageInfo = this.props.page.hasOwnProperty("number") ?
+    //     <h3>Employees - Page {this.props.page.number + 1} of {this.props.page.totalPages}</h3> : null;
 
-    var employees = this.props.employees.map(employee =>
+    var employees = this.state.employees.map(employee =>
         <Employee key={employee.entity._links.self.href}
                   employee={employee}
                   attributes={this.props.attributes}
