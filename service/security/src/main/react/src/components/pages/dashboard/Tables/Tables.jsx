@@ -6,6 +6,7 @@ import Follow from '../../../../routers/follow';
 import Client from '../../../../routers/client';
 import When from 'when';
 import Employee from "../../../../components/domain/Employee"
+import CreateDialog from "../../../../components/common/CreateDialog"
 
 // const root = 'http://localhost:8080/api';
 const root = '/api';
@@ -19,11 +20,22 @@ class Tables extends React.Component {
       employees: [],
       attributes: [],
       page: 1,
-      pageSize: 2,
+      pageSize: 10,
       pagesSize: 10,
       links: {}
     };
-
+    this.updatePageSize = this.updatePageSize.bind(this);
+    this.onCreate = this.onCreate.bind(this);
+    this.onUpdate = this.onUpdate.bind(this);
+    this.onDelete = this.onDelete.bind(this);
+    this.onNavigate = this.onNavigate.bind(this);
+    this.refreshCurrentPage = this.refreshCurrentPage.bind(this);
+    this.refreshAndGoToLastPage = this.refreshAndGoToLastPage.bind(this);
+    this.handleNavFirst = this.handleNavFirst.bind(this);
+    this.handleNavPrev = this.handleNavPrev.bind(this);
+    this.handleNavNext = this.handleNavNext.bind(this);
+    this.handleNavLast = this.handleNavLast.bind(this);
+    this.handleInput = this.handleInput.bind(this);
   }
 
   componentDidMount() {
@@ -77,6 +89,7 @@ class Tables extends React.Component {
     });
 
     followed.done(employees => {
+      debugger;
       this.setState({
         page: this.page,
         employees: employees,
@@ -86,7 +99,166 @@ class Tables extends React.Component {
       });
     });
   }
-  
+
+  // tag::on-create[]
+  onCreate(newEmployee) {
+    Follow(Client, root, ['employees']).done(response => {
+      Client({
+        method: 'POST',
+        path: response.entity._links.self.href,
+        entity: newEmployee,
+        headers: {'Content-Type': 'application/json'}
+      })
+    })
+  }
+  // end::on-create[]
+
+  // tag::on-update[]
+  onUpdate(employee, updatedEmployee) {
+    Client({
+      method: 'PUT',
+      path: employee.entity._links.self.href,
+      entity: updatedEmployee,
+      headers: {
+        'Content-Type': 'application/json',
+        'If-Match': employee.headers.Etag
+      }
+    }).done(response => {
+      /* Let the websocket handler update the state */
+    }, response => {
+      if (response.status.code === 403) {
+        alert('ACCESS DENIED: You are not authorized to update ' +
+            employee.entity._links.self.href);
+      }
+      if (response.status.code === 412) {
+        alert('DENIED: Unable to update ' + employee.entity._links.self.href +
+            '. Your copy is stale.');
+      }
+    });
+  }
+  // end::on-update[]
+
+  // tag::on-delete[]
+  onDelete(employee) {
+    Client({method: 'DELETE', path: employee.entity._links.self.href}
+    ).done(response => {/* let the websocket handle updating the UI */},
+        response => {
+          if (response.status.code === 403) {
+            alert('ACCESS DENIED: You are not authorized to delete ' +
+                employee.entity._links.self.href);
+          }
+        });
+  }
+  // end::on-delete[]
+
+  onNavigate(navUri) {
+    Client({
+      method: 'GET',
+      path: navUri
+    }).then(employeeCollection => {
+      this.links = employeeCollection.entity._links;
+      this.page = employeeCollection.entity.page;
+
+      return employeeCollection.entity._embedded.employees.map(employee =>
+          Client({
+            method: 'GET',
+            path: employee._links.self.href
+          })
+      );
+    }).then(employeePromises => {
+      return When.all(employeePromises);
+    }).done(employees => {
+      this.setState({
+        page: this.page,
+        employees: employees,
+        attributes: Object.keys(this.schema.properties),
+        pageSize: this.state.pageSize,
+        links: this.links
+      });
+    });
+  }
+
+  updatePageSize(pageSize) {
+    if (pageSize !== this.state.pageSize) {
+      this.loadFromServer(pageSize);
+    }
+  }
+
+  // tag::websocket-handlers[]
+  refreshAndGoToLastPage(message) {
+    Follow(Client, root, [{
+      rel: 'employees',
+      params: {size: this.state.pageSize}
+    }]).done(response => {
+      if (response.entity._links.last !== undefined) {
+        this.onNavigate(response.entity._links.last.href);
+      } else {
+        this.onNavigate(response.entity._links.self.href);
+      }
+    })
+  }
+
+  refreshCurrentPage(message) {
+    Follow(Client, root, [{
+      rel: 'employees',
+      params: {
+        size: this.state.pageSize,
+        page: this.state.page.number
+      }
+    }]).then(employeeCollection => {
+      this.links = employeeCollection.entity._links;
+      this.page = employeeCollection.entity.page;
+
+      return employeeCollection.entity._embedded.employees.map(employee => {
+        return Client({
+          method: 'GET',
+          path: employee._links.self.href
+        })
+      });
+    }).then(employeePromises => {
+      return When.all(employeePromises);
+    }).then(employees => {
+      this.setState({
+        page: this.page,
+        employees: employees,
+        attributes: Object.keys(this.schema.properties),
+        pageSize: this.state.pageSize,
+        links: this.links
+      });
+    });
+  }
+  // end::websocket-handlers[]
+
+  handleInput(e) {
+    e.preventDefault();
+    var pageSize = React.findDOMNode(this.refs.pageSize).value;
+    if (/^[0-9]+$/.test(pageSize)) {
+      this.updatePageSize(pageSize);
+    } else {
+      React.findDOMNode(this.refs.pageSize).value = pageSize.substring(0, pageSize.length - 1);
+    }
+  }
+
+  handleNavFirst(e) {
+    e.preventDefault();
+    this.onNavigate(this.links.first.href);
+  }
+
+  handleNavPrev(e) {
+    e.preventDefault();
+    this.onNavigate(this.links.prev.href);
+  }
+
+  handleNavNext(e) {
+    e.preventDefault();
+    this.onNavigate(this.links.next.href);
+  }
+
+  handleNavLast(e) {
+    e.preventDefault();
+    this.onNavigate(this.links.last.href);
+  }
+
   render() {
     //var pageInfo = this.props.page.hasOwnProperty("number") ?
     //     <h3>Employees - Page {this.props.page.number + 1} of {this.props.page.totalPages}</h3> : null;
@@ -94,14 +266,14 @@ class Tables extends React.Component {
     var employees = this.state.employees.map(employee =>
         <Employee key={employee.entity._links.self.href}
                   employee={employee}
-                  attributes={this.props.attributes}
-                  onUpdate={this.props.onUpdate}
-                  onDelete={this.props.onDelete}/>
+                  attributes={this.state.attributes}
+                  onUpdate={this.onUpdate}
+                  onDelete={this.onDelete}/>
     );
     return (
-
       <div>
-        <div className="col-lg-12"> 
+        <CreateDialog attributes={this.state.attributes} onCreate={this.onCreate}/>
+        <div className="col-lg-12">
           <PageHeader>Tables</PageHeader> 
         </div>
 

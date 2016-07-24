@@ -1,4 +1,5 @@
 import React from "react";
+import UpdateDialog from "../common/UpdateDialog"
 
 // tag::employee[]
 class Employee extends React.Component {
@@ -6,11 +7,6 @@ class Employee extends React.Component {
     constructor(props) {
         super(props);
         this.handleDelete = this.handleDelete.bind(this);
-        /**
-        <UpdateDialog employee={this.props.employee}
-                      attributes={this.props.attributes}
-                      onUpdate={this.props.onUpdate}/>
-         **/
     }
 
     handleDelete() {
@@ -25,6 +21,9 @@ class Employee extends React.Component {
                 <td>{this.props.employee.entity.description}</td>
                 <td>{this.props.employee.entity.manager.name}</td>
                 <td>
+                    <UpdateDialog employee={this.props.employee}
+                                  attributes={this.props.attributes}
+                                  onUpdate={this.props.onUpdate}/>
                 </td>
                 <td>
                     <button onClick={this.handleDelete}>Delete</button>
