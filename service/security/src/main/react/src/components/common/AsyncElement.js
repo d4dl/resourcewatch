@@ -1,6 +1,6 @@
 import React from 'react';
 import Router from 'react-router';
-import { Route, RouteHandler, Link } from 'react-router';
+import { Route, Link } from 'react-router';
 import NProgress from 'nprogress';
 
 NProgress.configure({ showSpinner: false });
@@ -33,7 +33,7 @@ var AsyncElement = {
     if (Component) {
       // can't find RouteHandler in the loaded component, so we just grab
       // it here first.
-      this.props.activeRoute = <RouteHandler/>;
+      this.props.activeRoute = this.props.children;
       return <Component {...this.props}/>;
     }
 

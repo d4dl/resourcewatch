@@ -12,8 +12,6 @@ var LoginPage = React.createClass({
     };
   },
 
-  mixins: [Router.Navigation],
-
   render: function(){
   
     return <div className="col-md-4 col-md-offset-4">

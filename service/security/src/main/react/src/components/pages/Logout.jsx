@@ -7,7 +7,6 @@ var LogoutPage = React.createClass({
 
   },
   
-  mixins: [Router.Navigation],
 
   render: function(){
 

@@ -1,5 +1,5 @@
 import React from "react";
-import Router, { Link, RouteHandler } from "react-router";
+import Router, { Link } from "react-router";
 
 import {Navbar, Nav, NavItem, NavDropdown, MenuItem, ProgressBar} from "react-bootstrap";
 import $ from "jquery";
@@ -298,7 +298,6 @@ var HomePage = React.createClass({
           </Navbar>
 
           <div id="page-wrapper" className="page-wrapper" ref="pageWrapper" style={{minHeight: this.state.Height}}>
-            <RouteHandler {...this.props} />
           </div>
 
         </div>

@@ -89,7 +89,6 @@ class Tables extends React.Component {
     });
 
     followed.done(employees => {
-      debugger;
       this.setState({
         page: this.page,
         employees: employees,
