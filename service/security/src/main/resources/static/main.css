@@ -12,7 +12,14 @@ td, th {
     text-align: left;
 }
 
-/*Classes for creating dialogs*/
+.modal-container {
+    position: relative;
+}
+.modal-container .modal, .modal-container .modal-backdrop {
+    position: absolute;
+}
+
+/*Classes for creating dialog the old way.  Not done this way anymores*/
 
 .modalDialog {
     position: fixed;

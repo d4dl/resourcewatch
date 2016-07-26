@@ -1,9 +1,23 @@
 import React from 'react';
+import { Modal } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
+
 class UpdateDialog extends React.Component {
 
     constructor(props) {
         super(props);
+        this.state = { showModal: false };
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.open = this.open.bind(this);
+        this.close = this.close.bind(this);
+    }
+
+    close() {
+        this.setState({ showModal: false });
+    }
+
+    open() {
+        this.setState({ showModal: true });
     }
 
     handleSubmit(e) {
@@ -13,7 +27,7 @@ class UpdateDialog extends React.Component {
             updatedEmployee[attribute] = React.findDOMNode(this.refs[attribute]).value.trim();
         });
         this.props.onUpdate(this.props.employee, updatedEmployee);
-        window.location = "#";
+        this.close()
     }
 
     render() {
@@ -29,20 +43,23 @@ class UpdateDialog extends React.Component {
 
         return (
             <div>
-                <a href={"#" + dialogId}>Update</a>
-
-                <div id={dialogId} className="modalDialog">
-                    <div>
-                        <a href="#" title="Close" className="close">X</a>
-
-                        <h2>Update an employee</h2>
-
+                <Button bsStyle="primary" bsSize="small" onClick={this.open} >
+                    Update
+                </Button>
+                <Modal show={this.state.showModal} onHide={this.close}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Update Employee</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
                         <form>
                             {inputs}
                             <button onClick={this.handleSubmit}>Update</button>
                         </form>
-                    </div>
-                </div>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button onClick={this.close}>Close</Button>
+                    </Modal.Footer>
+                </Modal>
             </div>
         )
     }

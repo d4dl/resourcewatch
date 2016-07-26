@@ -16,6 +16,8 @@ import DashboardGridPage from "../components/pages/dashboard/Grid";
 import DashboardBlankPage from "../components/pages/dashboard/Blank";
 import DashboardFlotChartsPage from "../components/pages/dashboard/FlotCharts";
 import DashboardMorrisjsChartsPage from "../components/pages/dashboard/MorrisjsCharts";
+import UpdateDialog from "../components/common/UpdateDialog";
+import CreateDialog from "../components/common/CreateDialog";
 import LoginPage from "../components/pages/Login";
 import LogoutPage from "../components/pages/Logout";
 
@@ -40,6 +42,8 @@ var Routes = React.createClass({
               <Route name="dashboard.blank" path="/blank" handler={DashboardBlankPage} />
               <DefaultRoute name="dashboard.default" handler={DashboardHomePage} />
             </Route>
+            <Route name="updateEmployee" path="/employees/:employeeId" handler={UpdateDialog} />
+            <Route name="createEmployee" path="/employees/:employeeId" handler={CreateDialog} />
             <Route name="login" path="/login" handler={LoginPage} />
             <Route name="logout" path="/logout" handler={LogoutPage} />
             <DefaultRoute name="default" handler={DashboardLayout} />

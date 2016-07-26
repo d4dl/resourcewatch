@@ -1,9 +1,24 @@
 import React from 'react';
+import { Modal } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
+
 class CreateDialog extends React.Component {
 
     constructor(props) {
         super(props);
+        this.state = { showModal: false };
+
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.open = this.open.bind(this);
+        this.close = this.close.bind(this);
+    }
+    
+    close() {
+        this.setState({ showModal: false });
+    }
+
+    open() {
+        this.setState({ showModal: true });
     }
 
     handleSubmit(e) {
@@ -16,7 +31,7 @@ class CreateDialog extends React.Component {
         this.props.attributes.forEach(attribute => {
             React.findDOMNode(this.refs[attribute]).value = ''; // clear out the dialog's inputs
         });
-        window.location = "#";
+        this.close()
     }
 
     render() {
@@ -27,20 +42,23 @@ class CreateDialog extends React.Component {
         );
         return (
             <div>
-                <a href="#createEmployee">Create</a>
-
-                <div id="createEmployee" className="modalDialog">
-                    <div>
-                        <a href="#" title="Close" className="close">X</a>
-
-                        <h2>Create new employee</h2>
-
+                <Button bsStyle="primary" bsSize="medium" onClick={this.open} >
+                    Create New Employee
+                </Button>
+                <Modal show={this.state.showModal} onHide={this.close}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>New Employee</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
                         <form>
                             {inputs}
                             <button onClick={this.handleSubmit}>Create</button>
                         </form>
-                    </div>
-                </div>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button onClick={this.close}>Close</Button>
+                    </Modal.Footer>
+                </Modal>
             </div>
         )
     }
