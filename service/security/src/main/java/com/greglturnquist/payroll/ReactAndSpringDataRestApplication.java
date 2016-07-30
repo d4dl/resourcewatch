@@ -15,18 +15,50 @@
  */
 package com.greglturnquist.payroll;
 
+import org.activiti.spring.SpringAsyncExecutor;
+import org.activiti.spring.SpringCallerRunsRejectedJobsHandler;
+import org.activiti.spring.SpringRejectedJobsHandler;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
  * @author Greg Turnquist
  */
 // tag::code[]
 @SpringBootApplication
+@EnableAutoConfiguration(exclude = {
+		org.activiti.spring.boot.RestApiAutoConfiguration.class,
+		org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration.class,
+		org.activiti.spring.boot.SecurityAutoConfiguration.class,
+		org.activiti.spring.boot.JpaProcessEngineAutoConfiguration.class,
+		ThreadPoolTaskExecutor.class
+})
+@Configuration
+@EnableSpringConfigured
 public class ReactAndSpringDataRestApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ReactAndSpringDataRestApplication.class, args);
+	}
+
+
+	@Bean
+	@Primary
+	public SpringAsyncExecutor springAsyncExecutor() {
+		return new SpringAsyncExecutor(new SimpleAsyncTaskExecutor(), springRejectedJobsHandler());
+	}
+
+	@Bean
+	@Primary
+	public SpringRejectedJobsHandler springRejectedJobsHandler() {
+		return new SpringCallerRunsRejectedJobsHandler();
 	}
 }
 // end::code[]

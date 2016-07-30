@@ -1,9 +1,82 @@
 import React, { PropTypes, Component } from 'react';
 import {Pagination, Panel, Well, Button, PageHeader} from "react-bootstrap";
 
-var Tables = React.createClass({
+import StompClient from '../../../../routers/websocket-listener';
+import Follow from '../../../../routers/follow';
+import Client from '../../../../routers/client';
+// const root = 'http://localhost:8080/api';
+const root = '/api';
 
-  render: function() {
+
+class Tables extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      pagesSize: 10
+    }
+  }
+
+  componentDidMount() {
+    this.loadFromServer(this.state.pageSize);
+    StompClient.register([
+      {route: '/topic/newEmployee', callback: this.refreshAndGoToLastPage},
+      {route: '/topic/updateEmployee', callback: this.refreshCurrentPage},
+      {route: '/topic/deleteEmployee', callback: this.refreshCurrentPage}
+    ]);
+  }
+
+  loadFromServer(pageSize) {
+    Follow(Client, root, [
+      {rel: 'employees', params: {size: pageSize}}]
+    ).then(employeeCollection => {
+      return Client({
+        method: 'GET',
+        path: employeeCollection.entity._links.profile.href,
+        headers: {'Accept': 'application/schema+json'}
+      }).then(schema => {
+        // tag::json-schema-filter[]
+        /**
+         * Filter unneeded JSON Schema properties, like uri references and
+         * subtypes ($ref).
+         */
+        Object.keys(schema.entity.properties).forEach(function (property) {
+          if (schema.entity.properties[property].hasOwnProperty('format') &&
+              schema.entity.properties[property].format === 'uri') {
+            delete schema.entity.properties[property];
+          }
+          if (schema.entity.properties[property].hasOwnProperty('$ref')) {
+            delete schema.entity.properties[property];
+          }
+        });
+
+        this.schema = schema.entity;
+        this.links = employeeCollection.entity._links;
+        return employeeCollection;
+        // end::json-schema-filter[]
+      });
+    }).then(employeeCollection => {
+      this.page = employeeCollection.entity.page;
+      return employeeCollection.entity._embedded.employees.map(employee =>
+          Client({
+            method: 'GET',
+            path: employee._links.self.href
+          })
+      );
+    }).then(employeePromises => {
+      return when.all(employeePromises);
+    }).done(employees => {
+      this.setState({
+        page: this.page,
+        employees: employees,
+        attributes: Object.keys(this.schema.properties),
+        pageSize: pageSize,
+        links: this.links
+      });
+    });
+  }
+  
+  render() {
     return (
 
       <div>
@@ -207,6 +280,6 @@ var Tables = React.createClass({
     );
   }
 
-});
+}
+export default Tables
 
-export default Tables;

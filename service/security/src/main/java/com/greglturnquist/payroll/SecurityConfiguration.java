@@ -15,8 +15,14 @@
  */
 package com.greglturnquist.payroll;
 
+import org.activiti.spring.SpringAsyncExecutor;
+import org.activiti.spring.SpringCallerRunsRejectedJobsHandler;
+import org.activiti.spring.SpringRejectedJobsHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -42,12 +48,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.passwordEncoder(Manager.PASSWORD_ENCODER);
 	}
 
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 			.authorizeRequests()
-				.antMatchers("/bower_components/**", "/*.js",
-						"/*.jsx", "/main.css").permitAll()
+				.antMatchers("/built/**", "/main.css").permitAll()
 				.anyRequest().authenticated()
 				.and()
 			.formLogin()
