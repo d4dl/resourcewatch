@@ -19,7 +19,6 @@ import org.activiti.spring.SpringAsyncExecutor;
 import org.activiti.spring.SpringCallerRunsRejectedJobsHandler;
 import org.activiti.spring.SpringRejectedJobsHandler;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -32,11 +31,6 @@ import org.springframework.core.task.SimpleAsyncTaskExecutor;
  *
  */
 @SpringBootApplication
-@EnableAutoConfiguration(exclude = {
-		org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration.class,
-		org.activiti.spring.boot.SecurityAutoConfiguration.class,
-		org.activiti.spring.boot.JpaProcessEngineAutoConfiguration.class
-})
 @Configuration
 @EnableSpringConfigured
 @ComponentScan("com.d4dl.model, com.d4dl.data, com.d4dl.controller")
