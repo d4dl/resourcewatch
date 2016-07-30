@@ -18,7 +18,6 @@ package com.greglturnquist.payroll;
 import org.activiti.spring.SpringAsyncExecutor;
 import org.activiti.spring.SpringCallerRunsRejectedJobsHandler;
 import org.activiti.spring.SpringRejectedJobsHandler;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,7 +25,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
-import org.springframework.core.task.TaskExecutor;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
@@ -52,8 +51,8 @@ public class ReactAndSpringDataRestApplication {
 
 	@Bean
 	@Primary
-	public SpringAsyncExecutor springAsyncExecutor(@Qualifier("brokerChannelExecutor") TaskExecutor taskExecutor) {
-		return new SpringAsyncExecutor(taskExecutor, springRejectedJobsHandler());
+	public SpringAsyncExecutor springAsyncExecutor() {
+		return new SpringAsyncExecutor(new SimpleAsyncTaskExecutor(), springRejectedJobsHandler());
 	}
 
 	@Bean
