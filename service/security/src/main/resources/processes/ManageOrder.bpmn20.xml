@@ -28,7 +28,7 @@
     <sequenceFlow id="sid-28925D3F-90D3-4B08-8562-06D77D3B06FE" name="Yes" sourceRef="sid-28F5C9DD-4A6C-4C1C-AB56-F5F648C50EE2" targetRef="sid-B651C35C-2C07-489C-BD4D-42E4DE1751E2">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${order.isWhitelisted}]]></conditionExpression>
     </sequenceFlow>
-    <exclusiveGateway id="sid-6B8445D7-928D-4865-BD05-6B9ECE5BB5CE"/>
+    <exclusiveGateway id="sid-6B8445D7-928D-4865-BD05-6B9ECE5BB5CE" default="sid-010F8DFA-8C64-4454-9E42-36EAF4409820"/>
     <exclusiveGateway id="sid-B651C35C-2C07-489C-BD4D-42E4DE1751E2"/>
     <sequenceFlow id="sid-7AE92143-C06D-4245-90AC-64B365208CEF" name="No" sourceRef="sid-28F5C9DD-4A6C-4C1C-AB56-F5F648C50EE2" targetRef="sid-8AB43769-30DB-4A1E-B919-F3E6269D43E1">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!order.isWhitelisted}]]></conditionExpression>

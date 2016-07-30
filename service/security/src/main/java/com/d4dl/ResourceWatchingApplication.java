@@ -13,39 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.greglturnquist.payroll;
+package com.d4dl;
 
 import org.activiti.spring.SpringAsyncExecutor;
 import org.activiti.spring.SpringCallerRunsRejectedJobsHandler;
 import org.activiti.spring.SpringRejectedJobsHandler;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
- * @author Greg Turnquist
+ *
  */
-// tag::code[]
 @SpringBootApplication
-@EnableAutoConfiguration(exclude = {
-		org.activiti.spring.boot.RestApiAutoConfiguration.class,
-		org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration.class,
-		org.activiti.spring.boot.SecurityAutoConfiguration.class,
-		org.activiti.spring.boot.JpaProcessEngineAutoConfiguration.class,
-		ThreadPoolTaskExecutor.class
-})
 @Configuration
 @EnableSpringConfigured
-public class ReactAndSpringDataRestApplication {
-
+@ComponentScan("com.d4dl.model, com.d4dl.data, com.d4dl.controller")
+public class ResourceWatchingApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(ReactAndSpringDataRestApplication.class, args);
+		SpringApplication.run(ResourceWatchingApplication.class, args);
 	}
 
 
@@ -61,4 +52,3 @@ public class ReactAndSpringDataRestApplication {
 		return new SpringCallerRunsRejectedJobsHandler();
 	}
 }
-// end::code[]

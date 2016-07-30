@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.greglturnquist.payroll;
+package com.d4dl.data;
 
+import com.d4dl.model.Employee;
+import com.d4dl.model.Manager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,7 +25,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 /**
- * @author Greg Turnquist
+ *
  */
 // tag::code[]
 @Component
@@ -43,13 +45,13 @@ public class DatabaseLoader implements CommandLineRunner {
 	@Override
 	public void run(String... strings) throws Exception {
 
-		Manager greg = this.managers.save(new Manager("greg", "turnquist",
+		Manager greg = this.managers.save(new Manager("jdeford", "OpenSesame",
 							"ROLE_MANAGER"));
-		Manager jdeford = this.managers.save(new Manager("jdeford", "Quinn4",
-							"ROLE_MANAGER"));
+		//Manager oliver = this.managers.save(new Manager("oliver", "gierke",
+							//"ROLE_MANAGER"));
 
 		SecurityContextHolder.getContext().setAuthentication(
-			new UsernamePasswordAuthenticationToken("greg", "doesn't matter",
+			new UsernamePasswordAuthenticationToken("jdeford", "doesn't matter",
 				AuthorityUtils.createAuthorityList("ROLE_MANAGER")));
 
 		this.employees.save(new Employee("Frodo", "Baggins", "ring bearer", greg));
@@ -57,12 +59,12 @@ public class DatabaseLoader implements CommandLineRunner {
 		this.employees.save(new Employee("Gandalf", "the Grey", "wizard", greg));
 
 		SecurityContextHolder.getContext().setAuthentication(
-			new UsernamePasswordAuthenticationToken("jdeford", "doesn't matter",
+			new UsernamePasswordAuthenticationToken("oliver", "doesn't matter",
 				AuthorityUtils.createAuthorityList("ROLE_MANAGER")));
 
-		this.employees.save(new Employee("Samwise", "Gamgee", "gardener", jdeford));
-		this.employees.save(new Employee("Merry", "Brandybuck", "pony rider", jdeford));
-		this.employees.save(new Employee("Peregrin", "Took", "pipe smoker", jdeford));
+		//this.employees.save(new Employee("Samwise", "Gamgee", "gardener", oliver));
+		//this.employees.save(new Employee("Merry", "Brandybuck", "pony rider", oliver));
+		//this.employees.save(new Employee("Peregrin", "Took", "pipe smoker", oliver));
 
 		SecurityContextHolder.clearContext();
 	}

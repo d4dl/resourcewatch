@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.greglturnquist.payroll;
+package com.d4dl.controller;
 
-import static com.greglturnquist.payroll.WebSocketConfiguration.*;
-
+import com.d4dl.model.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.core.annotation.HandleAfterCreate;
 import org.springframework.data.rest.core.annotation.HandleAfterDelete;
@@ -27,7 +26,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 /**
- * @author Greg Turnquist
+ *
  */
 // tag::code[]
 @Component
@@ -47,19 +46,19 @@ public class EventHandler {
 	@HandleAfterCreate
 	public void newEmployee(Employee employee) {
 		this.websocket.convertAndSend(
-				MESSAGE_PREFIX + "/newEmployee", getPath(employee));
+				WebSocketConfiguration.MESSAGE_PREFIX + "/newEmployee", getPath(employee));
 	}
 
 	@HandleAfterDelete
 	public void deleteEmployee(Employee employee) {
 		this.websocket.convertAndSend(
-				MESSAGE_PREFIX + "/deleteEmployee", getPath(employee));
+				WebSocketConfiguration.MESSAGE_PREFIX + "/deleteEmployee", getPath(employee));
 	}
 
 	@HandleAfterSave
 	public void updateEmployee(Employee employee) {
 		this.websocket.convertAndSend(
-				MESSAGE_PREFIX + "/updateEmployee", getPath(employee));
+				WebSocketConfiguration.MESSAGE_PREFIX + "/updateEmployee", getPath(employee));
 	}
 
 	/**

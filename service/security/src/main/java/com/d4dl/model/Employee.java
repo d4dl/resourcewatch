@@ -13,22 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.greglturnquist.payroll;
+package com.d4dl.model;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+
+import javax.persistence.*;
 
 /**
- * @author Greg Turnquist
+ *
  */
 // tag::code[]
-@Controller
-public class HomeController {
+@Data
+@Entity
+public class Employee {
 
-	@RequestMapping(value = "/")
-	public String index() {
-		return "index";
+	private @Id @GeneratedValue Long id;
+	private String firstName;
+	private String lastName;
+	private String description;
+
+	private @Version @JsonIgnore Long version;
+
+	private @ManyToOne Manager manager;
+
+	private Employee() {}
+
+	public Employee(String firstName, String lastName, String description, Manager manager) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.description = description;
+		this.manager = manager;
 	}
-
 }
 // end::code[]

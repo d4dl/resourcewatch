@@ -13,16 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.greglturnquist.payroll;
+package com.d4dl.controller;
 
-import org.activiti.spring.SpringAsyncExecutor;
-import org.activiti.spring.SpringCallerRunsRejectedJobsHandler;
-import org.activiti.spring.SpringRejectedJobsHandler;
+import com.d4dl.model.Manager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.core.task.TaskExecutor;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -30,12 +26,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 /**
- * @author Greg Turnquist
+ *
  */
 // tag::code[]
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@Order(50)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
@@ -47,7 +44,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.userDetailsService(this.userDetailsService)
 				.passwordEncoder(Manager.PASSWORD_ENCODER);
 	}
-
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
