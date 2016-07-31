@@ -1,6 +1,6 @@
 <?php
 
-class D4DL_OrderInspector_Model_Export
+class D4DL_ResourceWatch_Model_Export
 {
 
     /**
@@ -18,7 +18,7 @@ class D4DL_OrderInspector_Model_Export
         $exportPath = $dirPath . DS . $order->getIncrementId() . '.xml';
         Mage::log("Adding export: " . $exportPath);
         if($this->centralStationApproved($order)) {
-            Mage::getModel('d4dl_orderinspector/queueorder')->queueuOrder($order, "okay_to_ship");
+            Mage::getModel('d4dl_resourcewatch/queueorder')->queueuOrder($order, "okay_to_ship");
         }
 
         //if the export directory does not exist, create it

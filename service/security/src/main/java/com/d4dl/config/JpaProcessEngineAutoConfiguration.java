@@ -1,4 +1,4 @@
-package com.d4dl.controller;
+package com.d4dl.config;
 
 import java.io.IOException;
 

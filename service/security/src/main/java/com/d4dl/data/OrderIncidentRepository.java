@@ -13,35 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.d4dl.model;
+package com.d4dl.data;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
-
-import javax.persistence.*;
+import com.d4dl.model.OrderIncident;
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 
 /**
  *
  */
-@Data
-@Entity
-public class Employee {
+// tag::code[]
+public interface OrderIncidentRepository extends PagingAndSortingRepository<OrderIncident, Long> {
 
-	private @Id @GeneratedValue Long id;
-	private String firstName;
-	private String lastName;
-	private String description;
+	@Override
+	OrderIncident save(@Param("orderIncident") OrderIncident orderIncident);
 
-	private @Version @JsonIgnore Long version;
+	@Override
+	void delete(@Param("id") Long id);
 
-	private @ManyToOne Manager manager;
+	@Override
+	void delete(@Param("orderIncident") OrderIncident orderIncident);
 
-	private Employee() {}
-
-	public Employee(String firstName, String lastName, String description, Manager manager) {
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.description = description;
-		this.manager = manager;
-	}
 }
+// end::code[]

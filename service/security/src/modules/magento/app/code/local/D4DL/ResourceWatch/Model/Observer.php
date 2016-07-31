@@ -1,7 +1,7 @@
 <?php
 /**
  */
-class D4DL_OrderInspector_Model_Observer
+class D4DL_ResourceWatch_Model_Observer
 {
     /**
      * For finding the correct events to process: exploratory
@@ -38,7 +38,7 @@ class D4DL_OrderInspector_Model_Observer
                 'product-updates.log'
             );
 
-            Mage::getModel('d4dl_orderinspector/export')->exportOrder($event);
+            Mage::getModel('d4dl_resourcewatch/export')->exportOrder($event);
         } catch (Exception $e) {
             try {
                 Mage::log('Caught exception: ',  $e->getMessage(), "\n");

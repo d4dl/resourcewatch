@@ -33,7 +33,7 @@ import org.springframework.core.task.SimpleAsyncTaskExecutor;
 @SpringBootApplication
 @Configuration
 @EnableSpringConfigured
-@ComponentScan("com.d4dl.model, com.d4dl.data, com.d4dl.controller")
+@ComponentScan("com.d4dl.model, com.d4dl.data, com.d4dl.controller, com.d4dl.config")
 public class ResourceWatchingApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ResourceWatchingApplication.class, args);

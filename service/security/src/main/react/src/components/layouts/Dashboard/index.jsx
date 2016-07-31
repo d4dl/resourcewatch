@@ -205,8 +205,11 @@ var HomePage = React.createClass({
                       </li>
                     </ul>
                   </li>
-              
-                  <li> 
+
+                  <li>
+                    <Link to="dashboard.orders"><i className="fa fa-table fa-fw"></i> &nbsp;Order Incidents</Link>
+                  </li>
+                  <li>
                     <Link to="dashboard.tables"><i className="fa fa-table fa-fw"></i> &nbsp;Tables</Link>
                   </li> 
               

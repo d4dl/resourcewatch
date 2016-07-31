@@ -17,12 +17,15 @@ package com.d4dl.data;
 
 import com.d4dl.model.Employee;
 import com.d4dl.model.Manager;
+import com.d4dl.model.OrderIncident;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
 
 /**
  *
@@ -33,12 +36,15 @@ public class DatabaseLoader implements CommandLineRunner {
 
 	private final EmployeeRepository employees;
 	private final ManagerRepository managers;
+	private final OrderIncidentRepository orderIncidents;
 
 	@Autowired
-	public DatabaseLoader(EmployeeRepository employeeRepository,
+	public DatabaseLoader(OrderIncidentRepository orderIncidentRepository,
+			              EmployeeRepository employeeRepository,
 						  ManagerRepository managerRepository) {
 
 		this.employees = employeeRepository;
+		this.orderIncidents = orderIncidentRepository;
 		this.managers = managerRepository;
 	}
 
@@ -62,6 +68,14 @@ public class DatabaseLoader implements CommandLineRunner {
 			new UsernamePasswordAuthenticationToken("oliver", "doesn't matter",
 				AuthorityUtils.createAuthorityList("ROLE_MANAGER")));
 
+		OrderIncident orderIncident = new OrderIncident();
+		orderIncident.setAction("Init System");
+		orderIncident.setCustomerEmail("jdeford@gmail.com");
+		orderIncident.setAmount(new BigDecimal(0));
+		orderIncident.setTransactionId("653064af-8c9d-496f");
+		orderIncident.setShoppingCartName("Resource Matcher");
+		orderIncident.setDescription("Resource Matcher Processing Orders");
+		this.orderIncidents.save(orderIncident);
 		//this.employees.save(new Employee("Samwise", "Gamgee", "gardener", oliver));
 		//this.employees.save(new Employee("Merry", "Brandybuck", "pony rider", oliver));
 		//this.employees.save(new Employee("Peregrin", "Took", "pipe smoker", oliver));

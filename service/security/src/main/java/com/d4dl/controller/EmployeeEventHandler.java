@@ -15,6 +15,7 @@
  */
 package com.d4dl.controller;
 
+import com.d4dl.config.WebSocketConfiguration;
 import com.d4dl.model.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.core.annotation.HandleAfterCreate;
@@ -31,14 +32,14 @@ import org.springframework.stereotype.Component;
 // tag::code[]
 @Component
 @RepositoryEventHandler(Employee.class)
-public class EventHandler {
+public class EmployeeEventHandler {
 
 	private final SimpMessagingTemplate websocket;
 
 	private final EntityLinks entityLinks;
 
 	@Autowired
-	public EventHandler(SimpMessagingTemplate websocket, EntityLinks entityLinks) {
+	public EmployeeEventHandler(SimpMessagingTemplate websocket, EntityLinks entityLinks) {
 		this.websocket = websocket;
 		this.entityLinks = entityLinks;
 	}

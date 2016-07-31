@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Magento
+ *
+ * @category    D4DL
+ * @package     D4DL_ResourceWatch
+ * @copyright   Copyright (c) 2016 DeFord Logistics
+ */
+-->
+<config>
+    <sections>
+        <resourcewatch translate="label" module="resourcewatch">
+            <label>D4DL ResourceWatch</label>
+            <tab>service</tab>
+            <frontend_type>text</frontend_type>
+            <sort_order>10</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <groups>
+                <settings translate="label">
+                    <label>Resource Watch Settings</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>1</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <d4dl_resource_watch_endpoint translate="label,comment">
+                            <label>Endpoint.</label>
+                            <comment><![CDATA[The d4dl service endpoint.]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </d4dl_resource_watch_endpoint>
+                        <d4dl_resource_watch_process_key translate="label">
+                            <label>Process Key</label>
+                            <frontend_type>text</frontend_type>
+                            <comment>The key for the workflow process that will process watched orders.</comment>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </d4dl_resource_watch_process_key>
+                    </fields>
+                </settings>
+            </groups>
+        </resourcewatch>
+    </sections>
+</config>

@@ -1,0 +1,6 @@
+name = Current Posts
+description = A test block module that lists links to recent posts.
+core = 7.x
+
+; NEW LINE
+configure = admin/config/content/d4dl_resource_watch

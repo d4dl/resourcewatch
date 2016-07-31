@@ -26,20 +26,20 @@ class UpdateDialog extends React.Component {
         this.props.attributes.forEach(attribute => {
             updatedEmployee[attribute] = React.findDOMNode(this.refs[attribute]).value.trim();
         });
-        this.props.onUpdate(this.props.employee, updatedEmployee);
+        this.props.onUpdate(this.props.toUpdate, updatedEmployee);
         this.close()
     }
 
     render() {
         var inputs = this.props.attributes.map(attribute =>
-            <p key={this.props.employee.entity[attribute]}>
+            <p key={this.props.toUpdate.entity[attribute]}>
                 <input type="text" placeholder={attribute}
-                       defaultValue={this.props.employee.entity[attribute]}
+                       defaultValue={this.props.toUpdate.entity[attribute]}
                        ref={attribute} className="field" />
             </p>
         );
 
-        var dialogId = "updateEmployee-" + this.props.employee.entity._links.self.href;
+        var dialogId = "updateEmployee-" + this.props.toUpdate.entity._links.self.href;
 
         return (
             <div>

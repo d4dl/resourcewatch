@@ -1,7 +1,9 @@
 <?php
 
-class D4DL_OrderInspector_Model_QueueOrder
+class D4DL_ResourceWatch_Model_QueueOrder
 {
+    const ENDPOINT    = 'resourcewatch/settings/d4dl_resource_watch_endpoint';
+    const PROCESS_KEY = 'resourcewatch/settings/d4dl_resource_watch_process_key';
 
     /**
      * @return boolean

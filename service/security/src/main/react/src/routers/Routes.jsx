@@ -6,6 +6,7 @@ import DashboardLayout from "../components/layouts/Dashboard";
 
 import DashboardHomePage from "../components/pages/dashboard/Home";
 import DashboardTablesPage from "../components/pages/dashboard/Tables";
+import DashboardOrderIncidentsPage from "../components/pages/dashboard/OrderIncidents";
 import DashboardFormsPage from "../components/pages/dashboard/Forms";
 import DashboardPanelsWellsPage from "../components/pages/dashboard/PanelsWells";
 import DashboardButtonsPage from "../components/pages/dashboard/Buttons";
@@ -32,6 +33,7 @@ var Routes = React.createClass({
               <Route name="dashboard.flot-charts" path="/flot-charts" handler={DashboardFlotChartsPage} />
               <Route name="dashboard.morrisjs-charts" path="/morrisjs-charts" handler={DashboardMorrisjsChartsPage} />
               <Route name="dashboard.tables" path="/tables" handler={DashboardTablesPage} />
+              <Route name="dashboard.orders" path="/orders" handler={DashboardOrderIncidentsPage} />
               <Route name="dashboard.forms" path="/forms" handler={DashboardFormsPage} />
               <Route name="dashboard.panels-wells" path="/panels-wells" handler={DashboardPanelsWellsPage} />
               <Route name="dashboard.buttons" path="/buttons" handler={DashboardButtonsPage} />

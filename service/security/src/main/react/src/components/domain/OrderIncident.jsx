@@ -1,7 +1,6 @@
 import React from "react";
 import UpdateDialog from "../common/UpdateDialog"
 
-// tag::employee[]
 class Employee extends React.Component {
 
     constructor(props) {
@@ -10,18 +9,20 @@ class Employee extends React.Component {
     }
 
     handleDelete() {
-        this.props.onDelete(this.props.employee);
+        this.props.onDelete(this.props.orderIncident);
     }
 
     render() {
         return (
             <tr>
-                <td>{this.props.employee.entity.firstName}</td>
-                <td>{this.props.employee.entity.lastName}</td>
-                <td>{this.props.employee.entity.description}</td>
-                <td>{this.props.employee.entity.manager.name}</td>
+                <td>{this.props.orderIncident.entity.shoppingCartName}</td>
+                <td>{this.props.orderIncident.entity.action}</td>
+                <td>{this.props.orderIncident.entity.transactionId}</td>
+                <td>{this.props.orderIncident.entity.customerEmail}</td>
+                <td>{this.props.orderIncident.entity.amount}</td>
+                <td>{this.props.orderIncident.entity.description}</td>
                 <td>
-                    <UpdateDialog toUpdate={this.props.employee}
+                    <UpdateDialog toUpdate={this.props.orderIncident}
                                   attributes={this.props.attributes}
                                   onUpdate={this.props.onUpdate}/>
                 </td>

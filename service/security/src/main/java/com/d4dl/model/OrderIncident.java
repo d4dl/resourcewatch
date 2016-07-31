@@ -18,30 +18,36 @@ package com.d4dl.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Version;
+import java.math.BigDecimal;
 
 /**
  *
  */
 @Data
 @Entity
-public class Employee {
+public class OrderIncident {
 
 	private @Id @GeneratedValue Long id;
-	private String firstName;
-	private String lastName;
+	private String action;
+	private String transactionId;
+	private String shoppingCartId;
+	private String shoppingCartName;
+	private String siteName;
+	private String restClientId;
+	private String customerId;
+	private String customerName;
 	private String description;
+	private BigDecimal amount;
+	private String sku;
+	private String customerEmail;
 
 	private @Version @JsonIgnore Long version;
 
-	private @ManyToOne Manager manager;
+	public OrderIncident() {}
 
-	private Employee() {}
 
-	public Employee(String firstName, String lastName, String description, Manager manager) {
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.description = description;
-		this.manager = manager;
-	}
 }

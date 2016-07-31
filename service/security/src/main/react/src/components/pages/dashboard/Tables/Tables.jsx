@@ -1,5 +1,5 @@
 import React, { PropTypes, Component } from 'react';
-import {Pagination, Panel, Well, Button, PageHeader} from "react-bootstrap";
+import {BootstrapTable, Pagination, Panel, Well, Button, PageHeader} from "react-bootstrap";
 
 import StompClient from '../../../../routers/websocket-listener';
 import Follow from '../../../../routers/follow';
@@ -298,7 +298,7 @@ class Tables extends React.Component {
 
                   <div className="row">
                     <div className="col-sm-12">
-                      <table className="table table-striped table-bordered table-hover dataTable no-footer" id="dataTables-example" role="grid" aria-describedby="dataTables-example_info">
+                      <BootstrapTable pagination={true} className="table table-striped table-bordered table-hover dataTable no-footer" id="dataTables-example" role="grid" aria-describedby="dataTables-example_info">
                         <thead>
                           <tr role="row">
                             <th className="sorting_asc" tabIndex="0" aria-controls="dataTables-example" rowSpan="1" colSpan="1" aria-label="First Name" aria-sort="ascending" style={ {width: 265} }>First Name</th>
@@ -310,7 +310,7 @@ class Tables extends React.Component {
                         <tbody>
                         {employees}
                         </tbody>
-                      </table>
+                      </BootstrapTable>
                     </div>
                   </div>
                   <div className="row">
