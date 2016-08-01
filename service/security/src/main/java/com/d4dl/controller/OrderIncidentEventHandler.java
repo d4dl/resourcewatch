@@ -62,6 +62,7 @@ public class OrderIncidentEventHandler {
 				WebSocketConfiguration.MESSAGE_PREFIX + "/updateOrderIncident", getPath(orderIncident));
 	}
 
+
 	/**
 	 * Take an {@link OrderIncident} and get the URI using Spring Data REST's {@link EntityLinks}.
 	 *

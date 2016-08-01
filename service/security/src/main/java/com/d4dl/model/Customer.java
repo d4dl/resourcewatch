@@ -18,27 +18,23 @@ package com.d4dl.model;
 import lombok.Data;
 
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 
 /**
  *
  */
 @Data
 @Entity
-public class Employee extends BaseEntity {
+public class Customer extends BaseEntity {
 
 	private String firstName;
 	private String lastName;
-	private String description;
+	private String email;
 
-	private @ManyToOne Manager manager;
+	private Customer() {}
 
-	private Employee() {}
-
-	public Employee(String firstName, String lastName, String description, Manager manager) {
+	public Customer(String firstName, String lastName, String email) {
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.description = description;
-		this.manager = manager;
+		this.email = email;
 	}
 }

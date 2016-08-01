@@ -15,9 +15,7 @@
  */
 package com.d4dl.data;
 
-import com.d4dl.model.Employee;
-import com.d4dl.model.Manager;
-import com.d4dl.model.OrderIncident;
+import com.d4dl.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,17 +33,23 @@ import java.math.BigDecimal;
 public class DatabaseLoader implements CommandLineRunner {
 
 	private final EmployeeRepository employees;
+	private final WhitelistAttributeRepository whitelistAttributeRepository;
 	private final ManagerRepository managers;
 	private final OrderIncidentRepository orderIncidents;
+	private final CustomerRepository customerRepository;
 
 	@Autowired
 	public DatabaseLoader(OrderIncidentRepository orderIncidentRepository,
-			              EmployeeRepository employeeRepository,
-						  ManagerRepository managerRepository) {
+						  EmployeeRepository employeeRepository,
+						  ManagerRepository managerRepository,
+						  CustomerRepository customerRepository,
+						  WhitelistAttributeRepository whitelistAttributeRepository) {
 
 		this.employees = employeeRepository;
 		this.orderIncidents = orderIncidentRepository;
 		this.managers = managerRepository;
+		this.customerRepository = customerRepository;
+		this.whitelistAttributeRepository = whitelistAttributeRepository;
 	}
 
 	@Override
@@ -67,10 +71,15 @@ public class DatabaseLoader implements CommandLineRunner {
 		SecurityContextHolder.getContext().setAuthentication(
 			new UsernamePasswordAuthenticationToken("oliver", "doesn't matter",
 				AuthorityUtils.createAuthorityList("ROLE_MANAGER")));
+		CartOrder cartOrder = new CartOrder();
+		Customer customer = this.customerRepository.save(new Customer("Joshua", "Handlebar", null));
+		cartOrder.setCustomer(customer);
+		cartOrder.setCcLastFour("8908");
+		cartOrder.setEmail("jdeford@gmail.com");
+		cartOrder.whiteListCCAndEmail(whitelistAttributeRepository);
 
-		OrderIncident orderIncident = new OrderIncident();
+		OrderIncident orderIncident = new OrderIncident(cartOrder);
 		orderIncident.setAction("Init System");
-		orderIncident.setCustomerEmail("jdeford@gmail.com");
 		orderIncident.setAmount(new BigDecimal(0));
 		orderIncident.setTransactionId("653064af-8c9d-496f");
 		orderIncident.setShoppingCartName("Resource Matcher");

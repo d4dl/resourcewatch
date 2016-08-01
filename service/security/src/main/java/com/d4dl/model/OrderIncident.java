@@ -15,13 +15,13 @@
  */
 package com.d4dl.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.NonNull;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Version;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
 
 /**
@@ -29,9 +29,8 @@ import java.math.BigDecimal;
  */
 @Data
 @Entity
-public class OrderIncident {
+public class OrderIncident extends BaseEntity {
 
-	private @Id @GeneratedValue Long id;
 	private String action;
 	private String transactionId;
 	private String shoppingCartId;
@@ -42,12 +41,15 @@ public class OrderIncident {
 	private String customerName;
 	private String description;
 	private BigDecimal amount;
-	private String sku;
-	private String customerEmail;
 
-	private @Version @JsonIgnore Long version;
+	@NonNull
+	@ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+	private CartOrder cartOrder;
 
 	public OrderIncident() {}
 
 
+	public OrderIncident(CartOrder cartOrder) {
+		this.cartOrder = cartOrder;
+	}
 }

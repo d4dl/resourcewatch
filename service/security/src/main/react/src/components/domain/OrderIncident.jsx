@@ -18,7 +18,6 @@ class Employee extends React.Component {
                 <td>{this.props.orderIncident.entity.shoppingCartName}</td>
                 <td>{this.props.orderIncident.entity.action}</td>
                 <td>{this.props.orderIncident.entity.transactionId}</td>
-                <td>{this.props.orderIncident.entity.customerEmail}</td>
                 <td>{this.props.orderIncident.entity.amount}</td>
                 <td>{this.props.orderIncident.entity.description}</td>
                 <td>

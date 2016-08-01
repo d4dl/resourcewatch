@@ -16,6 +16,7 @@ class D4DL_ResourceWatch_Model_Observer
      */
     public function processEvent(Varien_Event_Observer $observer) {
         try {
+            $response =  $this->_getHelper()->checkSecretRequest($params);
             $product = $observer->getEvent()->getProduct();
             $order = $observer->getEvent()->getOrder();
             $event = $observer->getEvent();

@@ -18,11 +18,13 @@ package com.d4dl.data;
 import com.d4dl.model.OrderIncident;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 /**
  *
  */
 // tag::code[]
+@RepositoryRestResource
 public interface OrderIncidentRepository extends PagingAndSortingRepository<OrderIncident, Long> {
 
 	@Override

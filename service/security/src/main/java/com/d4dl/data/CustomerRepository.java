@@ -13,32 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.d4dl.model;
+package com.d4dl.data;
 
-import lombok.Data;
-
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import com.d4dl.model.Customer;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**
- *
  */
-@Data
-@Entity
-public class Employee extends BaseEntity {
-
-	private String firstName;
-	private String lastName;
-	private String description;
-
-	private @ManyToOne Manager manager;
-
-	private Employee() {}
-
-	public Employee(String firstName, String lastName, String description, Manager manager) {
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.description = description;
-		this.manager = manager;
-	}
+public interface CustomerRepository extends PagingAndSortingRepository<Customer, Long> {
 }

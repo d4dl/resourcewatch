@@ -13,32 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.d4dl.model;
+package com.d4dl.data;
 
-import lombok.Data;
+import com.d4dl.model.Customer;
+import com.d4dl.model.WhitelistAttribute;
+import org.springframework.data.repository.CrudRepository;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import java.util.List;
 
 /**
- *
  */
-@Data
-@Entity
-public class Employee extends BaseEntity {
+public interface WhitelistAttributeRepository extends CrudRepository<WhitelistAttribute, Long> {
 
-	private String firstName;
-	private String lastName;
-	private String description;
-
-	private @ManyToOne Manager manager;
-
-	private Employee() {}
-
-	public Employee(String firstName, String lastName, String description, Manager manager) {
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.description = description;
-		this.manager = manager;
-	}
+    public List<WhitelistAttribute> findByCustomerAndNameInAndValueIn(Customer customer, String[] names, String[] values);
 }

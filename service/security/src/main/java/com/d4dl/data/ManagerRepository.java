@@ -23,7 +23,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
  *
  */
 // tag::code[]
-@RepositoryRestResource(exported = false)
+@RepositoryRestResource
 public interface ManagerRepository extends Repository<Manager, Long> {
 
 	Manager save(Manager manager);

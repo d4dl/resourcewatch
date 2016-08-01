@@ -22,8 +22,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 
 /**
  *
@@ -32,11 +30,9 @@ import javax.persistence.Id;
 @Data
 @ToString(exclude = "password")
 @Entity
-public class Manager {
+public class Manager extends BaseEntity {
 
 	public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
-
-	private @Id @GeneratedValue Long id;
 
 	private String name;
 
