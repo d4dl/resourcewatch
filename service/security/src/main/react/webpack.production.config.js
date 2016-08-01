@@ -8,7 +8,7 @@ module.exports = {
   entry: "./src/app",
 
   output: {
-    path: __dirname + "/",
+    path: "../../../target/classes/static",
     filename: "app.js"
   },
 

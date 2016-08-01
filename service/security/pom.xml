@@ -10,8 +10,8 @@
         <version>1.4.0.RELEASE</version>
     </parent>
 
-    <groupId>com.greglturnquist</groupId>
-    <artifactId>react-and-spring-data-rest-security</artifactId>
+    <groupId>com.d4dl</groupId>
+    <artifactId>resource-watcher</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 

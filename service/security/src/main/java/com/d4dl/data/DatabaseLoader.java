@@ -78,7 +78,8 @@ public class DatabaseLoader implements CommandLineRunner {
 		cartOrder.setEmail("jdeford@gmail.com");
 		cartOrder.whiteListCCAndEmail(whitelistAttributeRepository);
 
-		OrderIncident orderIncident = new OrderIncident(cartOrder);
+		//OrderIncident orderIncident = new OrderIncident(cartOrder);
+		OrderIncident orderIncident = new OrderIncident();
 		orderIncident.setAction("Init System");
 		orderIncident.setAmount(new BigDecimal(0));
 		orderIncident.setTransactionId("653064af-8c9d-496f");

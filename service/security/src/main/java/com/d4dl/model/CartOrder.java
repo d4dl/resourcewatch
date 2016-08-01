@@ -22,7 +22,8 @@ public class CartOrder extends BaseEntity {
     @JsonIgnore
     private WhitelistAttributeRepository whitelistAttributeRepository;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "cartOrder")
+    //@OneToMany(cascade = CascadeType.ALL, mappedBy = "cartOrder")
+    @OneToMany(cascade = CascadeType.ALL)
     private List<OrderIncident> orderIncidents;
 
     private String ccLastFour;

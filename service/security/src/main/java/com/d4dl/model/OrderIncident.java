@@ -42,14 +42,16 @@ public class OrderIncident extends BaseEntity {
 	private String description;
 	private BigDecimal amount;
 
-	@NonNull
-	@ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-	private CartOrder cartOrder;
+	// @NonNull
+	// @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+	// private CartOrder cartOrder;
 
 	public OrderIncident() {}
 
 
+	/**
 	public OrderIncident(CartOrder cartOrder) {
 		this.cartOrder = cartOrder;
 	}
+	 **/
 }

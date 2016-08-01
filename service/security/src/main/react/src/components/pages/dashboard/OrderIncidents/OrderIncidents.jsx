@@ -333,7 +333,10 @@ class OrderIncidents extends React.Component {
                             <th className="sorting" tabIndex="0" aria-controls="dataTables-example" rowSpan="1" colSpan="1" aria-label="Action" style={ {width: 122} }>Action</th>
                             <th className="sorting" tabIndex="0" aria-controls="dataTables-example" rowSpan="1" colSpan="1" aria-label="Transaction Id" style={ {width: 299} }>TransactionId</th>
                             <th className="sorting" tabIndex="0" aria-controls="dataTables-example" rowSpan="1" colSpan="1" aria-label="Amount" style={ {width: 231} }>Amount</th>
-                            <th className="sorting" tabIndex="0" aria-controls="dataTables-example" rowSpan="1" colSpan="1" aria-label="Description" style={ {width: 180} }>Description</th></tr>
+                            <th className="sorting" tabIndex="0" aria-controls="dataTables-example" rowSpan="1" colSpan="1" aria-label="Description" style={ {width: 180} }>Description</th>
+                            <th className="sorting" tabIndex="0" aria-controls="dataTables-example" rowSpan="1" colSpan="1" aria-label="Description" style={ {width: 180} }>Update</th>
+                            <th className="sorting" tabIndex="0" aria-controls="dataTables-example" rowSpan="1" colSpan="1" aria-label="Description" style={ {width: 180} }>Delete</th>
+                          </tr>
                         </thead>
                         <tbody>
                         {orderIncidents}
