@@ -290,6 +290,19 @@ class OrderIncidents extends React.Component {
                   onUpdate={this.onUpdate}
                   onDelete={this.onDelete}/>
     );
+    /**
+    Source
+    Transaction id link to Shopping cart order
+    A link to the workflow process for the order
+    Ship to name
+    Shipping method
+    Ship to country
+    Payment method
+    Amount
+    Status
+    Review reason
+    Action - Refund - Ship
+     **/
     return (
       <div>
         <CreateDialog attributes={this.state.attributes} onCreate={this.onCreate}/>

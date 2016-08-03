@@ -1,6 +1,8 @@
-name = Current Posts
+name = Resource Watch
 description = A test block module that lists links to recent posts.
 core = 7.x
+dependencies[] = services
 
 ; NEW LINE
 configure = admin/config/content/d4dl_resource_watch
+

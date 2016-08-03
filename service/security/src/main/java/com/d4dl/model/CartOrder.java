@@ -17,13 +17,18 @@ import java.util.Map;
 @Entity
 public class CartOrder extends BaseEntity {
 
+    public static final String CART_ORDER = "cartOrder";
+
+    private String cartOrderId;
+    private String processInstanceId;
+    private String baseEndpoint;
+
     @Autowired
     @Transient
     @JsonIgnore
     private WhitelistAttributeRepository whitelistAttributeRepository;
 
-    //@OneToMany(cascade = CascadeType.ALL, mappedBy = "cartOrder")
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = CART_ORDER)
     private List<OrderIncident> orderIncidents;
 
     private String ccLastFour;
@@ -31,6 +36,7 @@ public class CartOrder extends BaseEntity {
 
     @ManyToOne
     private Customer customer;
+    private String cartEndpoint;
 
     public boolean isCCAndEmailWhitelisted() {
         String orderEmail = getOrderEmail();
@@ -81,4 +87,12 @@ public class CartOrder extends BaseEntity {
         return attrMap;
     }
 
+    public void addOrderIncident(OrderIncident orderIncident) {
+        orderIncident.setCartOrder(this);
+        this.orderIncidents.add(orderIncident);
+    }
+
+    public String getCartEndpoint() {
+        return baseEndpoint + "/" + cartOrderId;
+    }
 }

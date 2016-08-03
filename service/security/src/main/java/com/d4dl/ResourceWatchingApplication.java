@@ -15,6 +15,7 @@
  */
 package com.d4dl;
 
+import com.d4dl.controller.tasks.UpdateOrderStatusTask;
 import com.d4dl.model.OrderIncident;
 import org.activiti.spring.SpringAsyncExecutor;
 import org.activiti.spring.SpringCallerRunsRejectedJobsHandler;
@@ -52,6 +53,11 @@ public class ResourceWatchingApplication {
 	@Primary
 	public SpringRejectedJobsHandler springRejectedJobsHandler() {
 		return new SpringCallerRunsRejectedJobsHandler();
+	}
+
+	@Bean
+	public UpdateOrderStatusTask updateOrderStatusTask() {
+		return new UpdateOrderStatusTask();
 	}
 
 }

@@ -98,7 +98,57 @@ function d4dl_resource_watch_block_view($delta = '') {
     }
 }
 
+function d4dl_resource_watch_update_order_status($orderId, $status) {
+    /**
+    $order = commerce_order_load($orderId);
+    commerce_order_status_update($order, 'processing');
+     **/
+}
+
+
+/**
+ * The update is done via the services and services_entity modules.
+ * the aliases are api/order and api/product
+ */
+
 function d4dl_resource_watch_entity_update($entity, $type) {
+    /**
+     The rest services may have output related to some debugging.
+     You need to watch for that and print it out if it happens because
+     it will be a difficult to debug issue.
+     espeically related to this always_populate_raw_post_data = -1
+     Authenticate to this url to get the csrf token:
+     http://remanplanet.com/drupal/api/1.0/user/token.json
+     *
+     PUT this
+    {
+    "revision_id": "134",
+    "status": "complete50",
+    "order_id": "29",
+    "type": "commerce_order"
+    }
+     * to http://remanplanet.com/drupal/api/1.0/order/29.json
+     with header 
+     * 
+     Content-Type: application/json
+     X-CSRF-Token: oSLOQJK6I00ORgX8z3Xyg7LeKJk4V5mnCWhlmQ2lWR0
+     */
+
+    /** Order info research
+    products are here: http://remanplanet.com/drupal/api/1.0/order/29
+    $order_wrapper = entity_metadata_wrapper('commerce_order', $entity);
+    //$shipping is an array containing all shipping data
+    $shipping = $order_wrapper->commerce_customer_shipping->commerce_customer_address->value();
+
+    $payment_method = '';
+    $order = commerce_order_load($order_id);
+    $r = explode('|', $order->data['payment_method']);
+    if (count($r) > 1){
+        $rule = rules_config_load($r[1]);
+        $payment_method = $rule->label;
+    }
+    Order info research */
+
     // Update the entity's entry in a fictional table of all entities.
     $info = entity_get_info($type);
     error_log("--- D4DL Entity is updated:\n" . json_encode($entity, JSON_PRETTY_PRINT));

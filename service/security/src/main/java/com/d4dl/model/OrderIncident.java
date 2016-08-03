@@ -19,10 +19,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NonNull;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 /**
@@ -34,7 +31,9 @@ public class OrderIncident extends BaseEntity {
 
 	private String action;
 	private String transactionId;
-	private String shoppingCartId;
+    private String processDefinitionKey;//The process definition that handles these kinds of incidents per the client request
+	private String cartOrderId;
+    private String shoppingCartId;
 	private String shoppingCartName;
 	private String siteName;
 	private String restClientId;
@@ -42,6 +41,15 @@ public class OrderIncident extends BaseEntity {
 	private String customerName;
 	private String description;
 	private BigDecimal amount;
+
+    public enum IncidentType {
+        CART_STATE_CHANGE,
+        AUTO_PROCESS_STATE_CHANGE,
+        MANUAL_STATE_CHANGE
+    }
+
+    @Enumerated(EnumType.STRING)
+    private IncidentType incidentType;
 
 	@NonNull
 	@ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
