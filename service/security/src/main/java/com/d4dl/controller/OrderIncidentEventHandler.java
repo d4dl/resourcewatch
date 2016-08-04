@@ -58,21 +58,28 @@ public class OrderIncidentEventHandler {
 
 	@HandleAfterCreate
 	public void newOrderIncident(OrderIncident orderIncident) {
+		Logger.getLogger(this.getClass().getName()).info("Received OrderIncident " + orderIncident);
 		//TODO This needs to be multitenant, multisource and multi order
-		CartOrder cartOrder = orderRepository.findByCartSystemId(orderIncident.getCartSystemId());
-        Logger.getLogger(this.getClass().getName()).info("Found " + cartOrder + " for id " +  orderIncident.getCartSystemId());
-        if(cartOrder == null) {
+		CartOrder incomingOrder = orderIncident.getCartOrder();
+		CartOrder existingOrder = orderRepository.findByCartSystemId(incomingOrder.getCartSystemId());
+
+        Logger.getLogger(this.getClass().getName()).info("Found " + existingOrder + " for id " + incomingOrder.getCartSystemId());
+        if(existingOrder == null) {
             Logger.getLogger(this.getClass().getName()).info("Starting process instance");
-            cartOrder = new CartOrder();
 
             Map<String, Object> startVariables = new HashMap();
-            startVariables.put(CartOrder.CART_ORDER, cartOrder);
+            startVariables.put(CartOrder.CART_ORDER, incomingOrder);
+			CartOrder newOrder = orderRepository.save(incomingOrder);
 
-            ProcessInstance instance = runtimeService.startProcessInstanceByKey(orderIncident.getProcessDefinitionKey(), startVariables);
-            cartOrder.setProcessInstanceId(instance.getProcessInstanceId());
+			Logger.getLogger(this.getClass().getName()).info("Couldn't find order for id " +
+					         incomingOrder.getCartSystemId() +
+					         ". Starting process instance for new order: " + incomingOrder);
+            ProcessInstance instance = runtimeService.startProcessInstanceByKey(newOrder.getProcessDefinitionKey(), startVariables);
+            newOrder.setProcessInstanceId(instance.getProcessInstanceId());
+			existingOrder = newOrder;
         }
-        cartOrder.addOrderIncident(orderIncident);
-        orderRepository.save(cartOrder);
+        existingOrder.addOrderIncident(orderIncident);
+        orderRepository.save(existingOrder);
 		this.websocket.convertAndSend(
 				WebSocketConfiguration.MESSAGE_PREFIX + "/newOrderIncident", getPath(orderIncident));
 	}

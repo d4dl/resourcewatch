@@ -7,17 +7,19 @@
  */
 class D4DL_ResourceWatch_Helper_Data extends Mage_Payment_Helper_Data
 {
+
+
     /**
-     * Reading a page via HTTPS and returning its content.
      */
-    protected function _getHttpsPage($host, $parameter)
+    public function _postOrderDetails($host, $parameter)
     {
+        error_log("Magento client posting to $host: \n" . json_encode($parameter, JSON_PRETTY_PRINT));
         $client = new Varien_Http_Client();
         $client->setUri($host)
             ->setConfig(array('timeout' => 30))
-            ->setHeaders('accept-encoding', '')
-            ->setParameterGet($parameter)
-            ->setMethod(Zend_Http_Client::GET);
+            ->setHeaders('accept-encoding', 'application/json')
+            ->setParameterPost($parameter)
+            ->setMethod(Zend_Http_Client::POST);
         $request = $client->request();
         // Workaround for pseudo chunked messages which are yet too short, so
         // only an exception is is thrown instead of returning raw body

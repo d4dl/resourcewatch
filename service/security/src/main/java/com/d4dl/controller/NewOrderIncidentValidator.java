@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -22,8 +23,9 @@ public class NewOrderIncidentValidator implements Validator {
 
     public void validate(Object target, Errors errors) {
         OrderIncident orderIncident = (OrderIncident) target;
-        List<OrderIncident> incidentList = orderIncidentRepository.findByCartSystemId(orderIncident.getCartSystemId(), orderIncident.getStatus());
-        Logger.getLogger(this.getClass().getName()).info("Found " + incidentList.size() + " incidences for order " + orderIncident.getCartSystemId() + " with status " + orderIncident.getStatus());
+
+        List<OrderIncident> incidentList = orderIncident.getCartOrder().getId() == 0 ? new ArrayList() : orderIncidentRepository.findByCartOrderAndStatus(orderIncident.getCartOrder(), orderIncident.getStatus());
+        Logger.getLogger(this.getClass().getName()).info("Validator Found " + incidentList.size() + " incidences for order " + orderIncident.getCartOrder().getCartSystemId() + " with status " + orderIncident.getStatus());
         if(incidentList.size() > 0) {
             errors.reject("ORDER_EXISTS", "There is already an order incident with status '" + orderIncident.getStatus());
         }

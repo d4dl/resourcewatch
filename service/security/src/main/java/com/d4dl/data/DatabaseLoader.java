@@ -79,10 +79,10 @@ public class DatabaseLoader implements CommandLineRunner {
 		cartOrder.whiteListCCAndEmail(whitelistAttributeRepository);
 
 		OrderIncident orderIncident = new OrderIncident(cartOrder);
-		orderIncident.setAction("Init System");
-		orderIncident.setAmount(new BigDecimal(0));
-		orderIncident.setTransactionId("653064af-8c9d-496f");
-		orderIncident.setShoppingCartName("Resource Matcher");
+		cartOrder.setAction("Init System");
+		cartOrder.setAmount(new BigDecimal(0));
+		cartOrder.setTransactionId("653064af-8c9d-496f");
+		cartOrder.setShoppingCartName("Resource Matcher");
 		orderIncident.setDescription("Resource Matcher Processing Orders");
 		this.orderIncidents.save(orderIncident);
 		//this.employees.save(new Employee("Samwise", "Gamgee", "gardener", oliver));

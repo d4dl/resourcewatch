@@ -2,6 +2,13 @@
 
 class D4DL_ResourceWatch_Model_Export
 {
+    const RESOURCE_WATCH_ENDPOINT = 'resourcewatch/settings/d4dl_resource_watch_endpoint';
+    const RESOURCE_WATCH_PROCESS_KEY = 'resourcewatch/settings/d4dl_resource_watch_process_key';
+
+    protected function _getHelper()
+    {
+        return Mage::helper('resourcewatch');
+    }
 
     /**
      * Generates an XML file from the order data and places it into
@@ -11,75 +18,38 @@ class D4DL_ResourceWatch_Model_Export
      *
      * @return boolean
      */
-    public function exportOrder($order) {
-        // Outbound report to Central Station not implemented
-        $dirPath = Mage::getBaseDir('var') . DS . 'export';
-        Mage::log("Export Order ... $dirPath");
-        $exportPath = $dirPath . DS . $order->getIncrementId() . '.xml';
-        Mage::log("Adding export: " . $exportPath);
-        if($this->centralStationApproved($order)) {
-            Mage::getModel('d4dl_resourcewatch/queueorder')->queueuOrder($order, "okay_to_ship");
-        }
-
-        //if the export directory does not exist, create it
-        if (!is_dir($dirPath)) {
-            mkdir($dirPath, 0777, true);
-        }
-
-        $data = $order->getData();
-
-        $xml = new SimpleXMLElement('<root/>');
-
-        $callback =
-            function ($value, $key) use (&$xml, &$callback) {
-                if ($value instanceof Varien_Object && is_array($value->getData())) {
-                    $value = $value->getData();
-                }
-                if (is_array($value)) {
-                    array_walk_recursive($value, $callback);
-                }
-                $xml->addChild($key, serialize($value));
-            };
-
-        array_walk_recursive($data, $callback);
-
-        file_put_contents(
-            $exportPath,
-            $xml->asXML()
+    public function exportOrder($event) {
+        $product = $event->getProduct();
+        $order = $event->getOrder();
+        $details = array(
+            "event"=>$event,
+            "product"=>$product,
+            "order"=>$order
         );
+        $typeDetails = array(
+            "event"=>get_class($event),
+            "order"=>get_class($order)
+        );
+        error_log("raw order: $order");
+        error_log("Exporting order: " . json_encode($details, JSON_PRETTY_PRINT));
+        error_log("Types are: " . json_encode($typeDetails, JSON_PRETTY_PRINT));
 
+        if(get_class($order) == 'Mage_Sales_Model_Order') {
+            $orderDetails = array(
+                "cartOrder"=>array(
+                    "cartSystemId"=>$order->getRealOrderId(),
+                    "amount"=>$order->getTotalDue(),
+                    'siteName'=>'Magento Drupal Store',
+                    'restClientId'=>'magento',
+                    'processDefinitionKey' => Mage::getStoreConfig(self::RESOURCE_WATCH_PROCESS_KEY),
+                ),
+                "status"=>$order->getStatusLabel(),
+            );
+            $this->_getHelper()->_postOrderDetails(Mage::getStoreConfig(self::RESOURCE_WATCH_ENDPOINT), $orderDetails);
+        } else {
+            error_log("Ignoring order for class " . get_class($order));
+        }
         return true;
-    }
-
-    public function centralStationApproved($order) {
-
-        // Rule
-        // Is it Magento
-        //    Is it paypal, Is it IPN complete, Is it US/Canada
-
-        // Other rules.
-        // USPS? Address match? CVV match? Less thatn $150. Is CC?
-        Mage::log("Not approving orders");
-
-        return $this->orderIsPaypal($order) &&
-            $this->orderIsIPNComplete($order) &&
-            $this->orderIsFromWhitelistCountry($order);
-    }
-
-
-    public function orderIsPaypal($order) {
-        return false;
-    }
-    
-    public function orderIsIPNComplete($order) {
-        // Before you make this approve orders 
-        // make sure the order amount processed by paypal is actuall
-        // the cost of the product.  ie they haven't hacked it.
-        return false;
-    }
-    
-    public function orderIsFromWhitelistCountry($order) {
-        return false;
     }
 }
 

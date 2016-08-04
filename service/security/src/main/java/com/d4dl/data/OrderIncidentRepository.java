@@ -15,6 +15,7 @@
  */
 package com.d4dl.data;
 
+import com.d4dl.model.CartOrder;
 import com.d4dl.model.OrderIncident;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -35,9 +36,7 @@ public interface OrderIncidentRepository extends PagingAndSortingRepository<Orde
 	@Override
 	void delete(@Param("id") Long id);
 
-	@Override
-	void delete(@Param("orderIncident") OrderIncident orderIncident);
-
-	List<OrderIncident> findByCartSystemId(String cartOrderId, String status);
+	List<OrderIncident> findByCartOrderAndStatus(CartOrder cartOrder, String status);
 }
+
 // end::code[]

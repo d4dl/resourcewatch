@@ -18,7 +18,7 @@ class D4DL_ResourceWatch_Model_QueueOrder
             $history->setIsCustomerNotified(false);
             $order->save();
         } catch (Exception $e) {
-            Mage::log("Error queueing orer " . $e->getMessage());
+            Mage::log("Error queueing order " . $e->getMessage());
         }
         return true;
     }

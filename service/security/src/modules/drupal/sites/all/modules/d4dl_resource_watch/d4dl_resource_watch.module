@@ -156,19 +156,22 @@ function d4dl_resource_watch_entity_update($entity, $type) {
     if(is_object($entity) && $entity->type == 'commerce_order') {
         $is_complete = isset($entity->data->commerce_payment_order_paid_in_full_invoked) && $entity->data->commerce_payment_order_paid_in_full_invoked;
         $payload = array('action'=>'Complete' ? $is_complete : "Paid",
-            'transactionId'=>$entity->order_number,
-            'shoppingCartId'=>'14',
-            'shoppingCartType'=>'drupal_commerce_rest',
-            'shoppingCartName'=>'D4DL Drupal Store',
-            'siteName'=>'D4DL Drupal Store',
-            'restClientId'=>'drupal',
-            'customerId'=>'drupal',
-            'customerEmail'=>$entity->mail,
-            'cartSystemId'=>$entity->revision_id,
-            'cartSystemQualifier'=>$entity->mail,
+            'cartOrder' => array(
+                'transactionId'=>$entity->order_number,
+                'shoppingCartId'=>'14',
+                'shoppingCartType'=>'drupal_commerce_rest',
+                'shoppingCartName'=>'D4DL Drupal Store',
+                'siteName'=>'D4DL Drupal Store',
+                'restClientId'=>'drupal',
+                'customerId'=>'drupal',
+                'processDefinitionKey' => variable_get('d4dl_resource_watch_process_key'),
+                'customerEmail'=>$entity->mail,
+                'cartSystemId'=>$entity->order_id,
+                'cartSystemQualifier'=>$entity->revision_id,
+                'description'=>"Purchase",
+                'amount'=>$entity->commerce_order_total['und'][0]['amount'] / 100
+            ),
             'status'=>$entity->status,
-            'description'=>"Purchase",
-            'amount'=>$entity->commerce_order_total['und'][0]['amount'] / 100
         );
         $to_debug = $entity->commerce_order_total['und'][0];
         error_log("DEBUGGING AMOUNT:\n" .  json_encode($to_debug, JSON_PRETTY_PRINT));

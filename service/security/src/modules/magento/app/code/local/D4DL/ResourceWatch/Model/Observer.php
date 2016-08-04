@@ -16,29 +16,8 @@ class D4DL_ResourceWatch_Model_Observer
      */
     public function processEvent(Varien_Event_Observer $observer) {
         try {
-            $response =  $this->_getHelper()->checkSecretRequest($params);
-            $product = $observer->getEvent()->getProduct();
-            $order = $observer->getEvent()->getOrder();
             $event = $observer->getEvent();
-            $details = array(
-                "event"=>$event,
-                "product"=>$product,
-                "order"=>$order,
-                "observer"=>$observer
-            );
-            Mage::log('D4DL Observer ');
-
-
-
-            // Write a new line to var/log/product-updates.log
-            $name = $product->getName();
-            $sku = $product->getSku();
-            Mage::log(
-                "{$name} ({$sku}) updated",
-                null,
-                'product-updates.log'
-            );
-
+            error_log("Observer data: " . " event " . $event->getName() . "\n" . json_encode($observer->getData(), JSON_PRETTY_PRINT));
             Mage::getModel('d4dl_resourcewatch/export')->exportOrder($event);
         } catch (Exception $e) {
             try {
@@ -48,5 +27,5 @@ class D4DL_ResourceWatch_Model_Observer
             }
         }
     }
-    
+
 }

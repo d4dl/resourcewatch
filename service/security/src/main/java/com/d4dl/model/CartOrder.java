@@ -5,7 +5,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,20 +22,29 @@ import java.util.logging.Logger;
 public class CartOrder extends BaseEntity {
 
     public static final String CART_ORDER = "cartOrder";
+    private boolean isManuallyApproved;
+    private String processInstanceId;
+    private String baseEndpoint;
 
+    private String action;
+    private String transactionId;
+    private String processDefinitionKey;//The process definition that handles these kinds of incidents per the client request
     private String cartSystemId;
     private String cartSystemQualifier;
     private String shoppingCartType;
-    private String processInstanceId;
-    private String baseEndpoint;
+    private String shoppingCartId;
+    private String shoppingCartName;
+    private String siteName;
+    private String restClientId;
+    private BigDecimal amount;
 
     @Autowired
     @Transient
     @JsonIgnore
     private WhitelistAttributeRepository whitelistAttributeRepository;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = CART_ORDER)
-    private List<OrderIncident> orderIncidents;
+    //@OneToMany(cascade = CascadeType.ALL, mappedBy = CART_ORDER)
+    //private List<OrderIncident> orderIncidents = new ArrayList();
 
     private String ccLastFour;
     private String email;
@@ -49,7 +61,7 @@ public class CartOrder extends BaseEntity {
         this.cartSystemQualifier = revisionId;
     }
 
-    public boolean isCCAndEmailWhitelisted() {
+    public boolean getIsCCAndEmailWhitelisted() {
         String orderEmail = getOrderEmail();
         Logger.getLogger(this.getClass().getName()).info("Checking if " + orderEmail + " and " + ccLastFour + " is whitelisted.");
         if(ccLastFour == null || orderEmail == null) {
@@ -101,10 +113,14 @@ public class CartOrder extends BaseEntity {
 
     public void addOrderIncident(OrderIncident orderIncident) {
         orderIncident.setCartOrder(this);
-        this.orderIncidents.add(orderIncident);
+        //this.orderIncidents.add(orderIncident);
     }
 
     public String getCartEndpoint() {
         return baseEndpoint + "/" + cartSystemId;
+    }
+
+    public boolean getIsManuallyApproved() {
+        return isManuallyApproved;
     }
 }

@@ -14,36 +14,25 @@
  * limitations under the License.
  */
 package com.d4dl.model;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NonNull;
+import lombok.ToString;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 
 /**
  *
  */
 @Data
 @Entity
+@ToString(exclude="cartOrder")
 public class OrderIncident extends BaseEntity {
-
-	private String action;
-	private String transactionId;
-    private String processDefinitionKey;//The process definition that handles these kinds of incidents per the client request
-	private String cartSystemId;
-    private String cartSystemQualifier;
-    private String shoppingCartType;
-    private String shoppingCartId;
-	private String shoppingCartName;
-	private String siteName;
-	private String restClientId;
-	private String customerId;
-	private String customerName;
-	private String description;
+    private String generatingSystemId;
+    private String action;
     private String status;
-	private BigDecimal amount;
+    private String description;
 
     public enum IncidentType {
         CART_STATE_CHANGE,
