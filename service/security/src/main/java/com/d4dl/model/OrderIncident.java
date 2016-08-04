@@ -45,7 +45,6 @@ public class OrderIncident extends BaseEntity {
 
 	@NonNull
 	@ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-	@JsonIgnore
 	private CartOrder cartOrder;
 
 	public OrderIncident() {}

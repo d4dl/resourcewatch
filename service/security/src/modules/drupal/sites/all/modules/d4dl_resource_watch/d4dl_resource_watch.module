@@ -163,12 +163,9 @@ function d4dl_resource_watch_entity_update($entity, $type) {
                 'shoppingCartName'=>'D4DL Drupal Store',
                 'siteName'=>'D4DL Drupal Store',
                 'restClientId'=>'drupal',
-                'customerId'=>'drupal',
                 'processDefinitionKey' => variable_get('d4dl_resource_watch_process_key'),
-                'customerEmail'=>$entity->mail,
                 'cartSystemId'=>$entity->order_id,
                 'cartSystemQualifier'=>$entity->revision_id,
-                'description'=>"Purchase",
                 'amount'=>$entity->commerce_order_total['und'][0]['amount'] / 100
             ),
             'status'=>$entity->status,
