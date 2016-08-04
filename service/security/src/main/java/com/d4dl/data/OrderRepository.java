@@ -23,5 +23,5 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
  */
 @RepositoryRestResource
 public interface OrderRepository extends PagingAndSortingRepository<CartOrder, Long> {
-    CartOrder findByCartOrderId(String cartOrderId);
+    CartOrder findByCartSystemId(String cartOrderId);
 }

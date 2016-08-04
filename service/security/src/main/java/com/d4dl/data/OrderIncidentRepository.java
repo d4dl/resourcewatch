@@ -20,6 +20,8 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
+import java.util.List;
+
 /**
  *
  */
@@ -36,5 +38,6 @@ public interface OrderIncidentRepository extends PagingAndSortingRepository<Orde
 	@Override
 	void delete(@Param("orderIncident") OrderIncident orderIncident);
 
+	List<OrderIncident> findByCartSystemId(String cartOrderId, String status);
 }
 // end::code[]

@@ -118,6 +118,7 @@ function d4dl_resource_watch_entity_update($entity, $type) {
      it will be a difficult to debug issue.
      espeically related to this always_populate_raw_post_data = -1
      Authenticate to this url to get the csrf token:
+     POST to: {"username": "admin", "password": "Quicks@nd1"}
      http://remanplanet.com/drupal/api/1.0/user/token.json
      *
      PUT this
@@ -157,11 +158,15 @@ function d4dl_resource_watch_entity_update($entity, $type) {
         $payload = array('action'=>'Complete' ? $is_complete : "Paid",
             'transactionId'=>$entity->order_number,
             'shoppingCartId'=>'14',
+            'shoppingCartType'=>'drupal_commerce_rest',
             'shoppingCartName'=>'D4DL Drupal Store',
             'siteName'=>'D4DL Drupal Store',
             'restClientId'=>'drupal',
             'customerId'=>'drupal',
             'customerEmail'=>$entity->mail,
+            'cartSystemId'=>$entity->revision_id,
+            'cartSystemQualifier'=>$entity->mail,
+            'status'=>$entity->status,
             'description'=>"Purchase",
             'amount'=>$entity->commerce_order_total['und'][0]['amount'] / 100
         );

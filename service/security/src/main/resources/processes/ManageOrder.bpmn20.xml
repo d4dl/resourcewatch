@@ -7,15 +7,15 @@
     <endEvent id="sid-616423E0-DF12-45F6-9E4E-51B4136673F4"/>
     <serviceTask id="sid-42C16C6F-1B3E-46DE-9C3A-70693B86F8C9" name="Refund" activiti:delegateExpression="${updateOrderStatusTask}">
       <extensionElements>
-        <activiti:field name="action">
+        <activiti:field name="status">
           <activiti:string><![CDATA[refund]]></activiti:string>
         </activiti:field>
       </extensionElements>
     </serviceTask>
     <serviceTask id="sid-E010DE03-CC36-4AB2-8EA6-FA92C8C562DD" name="OK To Ship" activiti:delegateExpression="${updateOrderStatusTask}">
       <extensionElements>
-        <activiti:field name="action">
-          <activiti:string><![CDATA[ship]]></activiti:string>
+        <activiti:field name="status">
+          <activiti:string><![CDATA[Complete]]></activiti:string>
         </activiti:field>
       </extensionElements>
     </serviceTask>

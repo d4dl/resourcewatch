@@ -9,6 +9,7 @@ import javax.persistence.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Created by joshuadeford on 7/31/16.
@@ -19,7 +20,9 @@ public class CartOrder extends BaseEntity {
 
     public static final String CART_ORDER = "cartOrder";
 
-    private String cartOrderId;
+    private String cartSystemId;
+    private String cartSystemQualifier;
+    private String shoppingCartType;
     private String processInstanceId;
     private String baseEndpoint;
 
@@ -38,8 +41,17 @@ public class CartOrder extends BaseEntity {
     private Customer customer;
     private String cartEndpoint;
 
+    public CartOrder() {
+    }
+
+    public CartOrder(String orderId, String revisionId) {
+        this.cartSystemId = orderId;
+        this.cartSystemQualifier = revisionId;
+    }
+
     public boolean isCCAndEmailWhitelisted() {
         String orderEmail = getOrderEmail();
+        Logger.getLogger(this.getClass().getName()).info("Checking if " + orderEmail + " and " + ccLastFour + " is whitelisted.");
         if(ccLastFour == null || orderEmail == null) {
             return false;
         }
@@ -93,6 +105,6 @@ public class CartOrder extends BaseEntity {
     }
 
     public String getCartEndpoint() {
-        return baseEndpoint + "/" + cartOrderId;
+        return baseEndpoint + "/" + cartSystemId;
     }
 }

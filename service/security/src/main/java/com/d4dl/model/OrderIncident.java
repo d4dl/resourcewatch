@@ -32,7 +32,9 @@ public class OrderIncident extends BaseEntity {
 	private String action;
 	private String transactionId;
     private String processDefinitionKey;//The process definition that handles these kinds of incidents per the client request
-	private String cartOrderId;
+	private String cartSystemId;
+    private String cartSystemQualifier;
+    private String shoppingCartType;
     private String shoppingCartId;
 	private String shoppingCartName;
 	private String siteName;
@@ -40,6 +42,7 @@ public class OrderIncident extends BaseEntity {
 	private String customerId;
 	private String customerName;
 	private String description;
+    private String status;
 	private BigDecimal amount;
 
     public enum IncidentType {

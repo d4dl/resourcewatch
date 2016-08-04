@@ -22,7 +22,6 @@ import com.d4dl.model.OrderIncident;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.rest.core.annotation.HandleAfterCreate;
 import org.springframework.data.rest.core.annotation.HandleAfterDelete;
 import org.springframework.data.rest.core.annotation.HandleAfterSave;
@@ -33,6 +32,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  *
@@ -58,8 +58,11 @@ public class OrderIncidentEventHandler {
 
 	@HandleAfterCreate
 	public void newOrderIncident(OrderIncident orderIncident) {
-		CartOrder cartOrder = orderRepository.findByCartOrderId(orderIncident.getCartOrderId());
+		//TODO This needs to be multitenant, multisource and multi order
+		CartOrder cartOrder = orderRepository.findByCartSystemId(orderIncident.getCartSystemId());
+        Logger.getLogger(this.getClass().getName()).info("Found " + cartOrder + " for id " +  orderIncident.getCartSystemId());
         if(cartOrder == null) {
+            Logger.getLogger(this.getClass().getName()).info("Starting process instance");
             cartOrder = new CartOrder();
 
             Map<String, Object> startVariables = new HashMap();
