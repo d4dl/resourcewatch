@@ -29,8 +29,9 @@ import javax.persistence.*;
 @Entity
 @ToString(exclude="cartOrder")
 public class OrderIncident extends BaseEntity {
-    private String generatingSystemId;
-    private String action;
+    private boolean isManuallyApproved;
+
+    private IncidentType type;
     private String status;
     private String description;
 
@@ -44,13 +45,16 @@ public class OrderIncident extends BaseEntity {
     private IncidentType incidentType;
 
 	@NonNull
-	@ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
 	private CartOrder cartOrder;
 
 	public OrderIncident() {}
 
 
-	public OrderIncident(CartOrder cartOrder) {
+	public OrderIncident(CartOrder cartOrder, IncidentType type, String status) {
 		this.cartOrder = cartOrder;
+        this.type = type;
+        this.status = status;
 	}
 }

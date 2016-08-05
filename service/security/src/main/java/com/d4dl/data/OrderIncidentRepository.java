@@ -15,13 +15,10 @@
  */
 package com.d4dl.data;
 
-import com.d4dl.model.CartOrder;
 import com.d4dl.model.OrderIncident;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
-
-import java.util.List;
 
 /**
  *
@@ -36,7 +33,7 @@ public interface OrderIncidentRepository extends PagingAndSortingRepository<Orde
 	@Override
 	void delete(@Param("id") Long id);
 
-	List<OrderIncident> findByCartOrderAndStatus(CartOrder cartOrder, String status);
+    OrderIncident findByRestClientIdAndShoppingCartIdAndCartOrderSystemIdAndCartOrderSystemQualifierAndStatus(String restClientId, String shoppingCartId, String cartOrderSystemId, String cartOrderSystemQualifier);
 }
 
 // end::code[]

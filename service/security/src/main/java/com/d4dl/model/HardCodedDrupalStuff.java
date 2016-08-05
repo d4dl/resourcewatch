@@ -36,7 +36,7 @@ public class HardCodedDrupalStuff {
         String cookie = fetchCooke();
         String token = fetchToken(cookie);
         RestTemplate restTemplate = new RestTemplate();
-        updateStatus(order.getCartSystemId(), order.getCartSystemQualifier(), status, cookie, token, restTemplate);
+        updateStatus(order.getCartOrderSystemId(), order.getCartOrderSystemQualifier(), status, cookie, token, restTemplate);
         OrderIncident incident = new OrderIncident();
         incident.setIncidentType(OrderIncident.IncidentType.AUTO_PROCESS_STATE_CHANGE);
         incident.setCartOrder(order);

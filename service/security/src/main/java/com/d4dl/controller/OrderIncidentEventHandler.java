@@ -17,10 +17,8 @@ package com.d4dl.controller;
 
 import com.d4dl.config.WebSocketConfiguration;
 import com.d4dl.data.OrderRepository;
-import com.d4dl.model.CartOrder;
 import com.d4dl.model.OrderIncident;
 import org.activiti.engine.RuntimeService;
-import org.activiti.engine.runtime.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.core.annotation.HandleAfterCreate;
 import org.springframework.data.rest.core.annotation.HandleAfterDelete;
@@ -30,8 +28,6 @@ import org.springframework.hateoas.EntityLinks;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -58,28 +54,7 @@ public class OrderIncidentEventHandler {
 
 	@HandleAfterCreate
 	public void newOrderIncident(OrderIncident orderIncident) {
-		Logger.getLogger(this.getClass().getName()).info("Received OrderIncident " + orderIncident);
-		//TODO This needs to be multitenant, multisource and multi order
-		CartOrder incomingOrder = orderIncident.getCartOrder();
-		CartOrder existingOrder = orderRepository.findByCartSystemId(incomingOrder.getCartSystemId());
-
-        Logger.getLogger(this.getClass().getName()).info("Found " + existingOrder + " for id " + incomingOrder.getCartSystemId());
-        if(existingOrder == null) {
-            Logger.getLogger(this.getClass().getName()).info("Starting process instance");
-
-            Map<String, Object> startVariables = new HashMap();
-            startVariables.put(CartOrder.CART_ORDER, incomingOrder);
-			CartOrder newOrder = orderRepository.save(incomingOrder);
-
-			Logger.getLogger(this.getClass().getName()).info("Couldn't find order for id " +
-					         incomingOrder.getCartSystemId() +
-					         ". Starting process instance for new order: " + incomingOrder);
-            ProcessInstance instance = runtimeService.startProcessInstanceByKey(newOrder.getProcessDefinitionKey(), startVariables);
-            newOrder.setProcessInstanceId(instance.getProcessInstanceId());
-			existingOrder = newOrder;
-        }
-        existingOrder.addOrderIncident(orderIncident);
-        orderRepository.save(existingOrder);
+		Logger.getLogger(this.getClass().getName()).info("Created OrderIncident " + orderIncident);
 		this.websocket.convertAndSend(
 				WebSocketConfiguration.MESSAGE_PREFIX + "/newOrderIncident", getPath(orderIncident));
 	}

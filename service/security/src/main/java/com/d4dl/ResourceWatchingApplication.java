@@ -16,7 +16,6 @@
 package com.d4dl;
 
 import com.d4dl.controller.tasks.UpdateOrderStatusTask;
-import com.d4dl.model.OrderIncident;
 import org.activiti.spring.SpringAsyncExecutor;
 import org.activiti.spring.SpringCallerRunsRejectedJobsHandler;
 import org.activiti.spring.SpringRejectedJobsHandler;
@@ -28,7 +27,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
-import org.springframework.validation.Validator;
 
 /**
  *

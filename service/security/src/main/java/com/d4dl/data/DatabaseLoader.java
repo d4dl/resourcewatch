@@ -35,18 +35,18 @@ public class DatabaseLoader implements CommandLineRunner {
 	private final EmployeeRepository employees;
 	private final WhitelistAttributeRepository whitelistAttributeRepository;
 	private final ManagerRepository managers;
-	private final OrderIncidentRepository orderIncidents;
+	private final OrderRepository orderRepository;
 	private final CustomerRepository customerRepository;
 
 	@Autowired
-	public DatabaseLoader(OrderIncidentRepository orderIncidentRepository,
+	public DatabaseLoader(OrderRepository orderRepository,
 						  EmployeeRepository employeeRepository,
 						  ManagerRepository managerRepository,
 						  CustomerRepository customerRepository,
 						  WhitelistAttributeRepository whitelistAttributeRepository) {
 
 		this.employees = employeeRepository;
-		this.orderIncidents = orderIncidentRepository;
+		this.orderRepository = orderRepository;
 		this.managers = managerRepository;
 		this.customerRepository = customerRepository;
 		this.whitelistAttributeRepository = whitelistAttributeRepository;
@@ -84,7 +84,8 @@ public class DatabaseLoader implements CommandLineRunner {
 		cartOrder.setTransactionId("653064af-8c9d-496f");
 		cartOrder.setShoppingCartName("Resource Matcher");
 		orderIncident.setDescription("Resource Matcher Processing Orders");
-		this.orderIncidents.save(orderIncident);
+		cartOrder.addOrderIncident(orderIncident);
+		orderRepository.save(cartOrder);
 		//this.employees.save(new Employee("Samwise", "Gamgee", "gardener", oliver));
 		//this.employees.save(new Employee("Merry", "Brandybuck", "pony rider", oliver));
 		//this.employees.save(new Employee("Peregrin", "Took", "pipe smoker", oliver));

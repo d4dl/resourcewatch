@@ -5,10 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,12 +24,14 @@ public class CartOrder extends BaseEntity {
     private boolean isManuallyApproved;
     private String processInstanceId;
     private String baseEndpoint;
+    private String orderTag;
 
     private String action;
     private String transactionId;
     private String processDefinitionKey;//The process definition that handles these kinds of incidents per the client request
-    private String cartSystemId;
-    private String cartSystemQualifier;
+    private String cartOrderSystemId;
+    private String status;
+    private String cartOrderSystemQualifier;
     private String shoppingCartType;
     private String shoppingCartId;
     private String shoppingCartName;
@@ -43,8 +44,8 @@ public class CartOrder extends BaseEntity {
     @JsonIgnore
     private WhitelistAttributeRepository whitelistAttributeRepository;
 
-    //@OneToMany(cascade = CascadeType.ALL, mappedBy = CART_ORDER)
-    //private List<OrderIncident> orderIncidents = new ArrayList();
+    @OneToMany(cascade = CascadeType.MERGE, mappedBy = CART_ORDER, fetch = FetchType.EAGER)
+    private List<OrderIncident> orderIncidents = new ArrayList();
 
     private String ccLastFour;
     private String email;
@@ -57,10 +58,11 @@ public class CartOrder extends BaseEntity {
     }
 
     public CartOrder(String orderId, String revisionId) {
-        this.cartSystemId = orderId;
-        this.cartSystemQualifier = revisionId;
+        this.cartOrderSystemId = orderId;
+        this.cartOrderSystemQualifier = revisionId;
     }
 
+    @JsonIgnore
     public boolean getIsCCAndEmailWhitelisted() {
         String orderEmail = getOrderEmail();
         Logger.getLogger(this.getClass().getName()).info("Checking if " + orderEmail + " and " + ccLastFour + " is whitelisted.");
@@ -72,10 +74,12 @@ public class CartOrder extends BaseEntity {
         return (ccLastFour.equals(attrMap.get("ccLastFour")) && orderEmail.equals(attrMap.get("email")));
     }
 
+    @JsonIgnore
     public void whiteListCCAndEmail() {
         whiteListCCAndEmail(whitelistAttributeRepository);
     }
 
+    @JsonIgnore
     public void whiteListCCAndEmail(WhitelistAttributeRepository whitelistAttributeRepository) {
         String orderEmail = getOrderEmail();
         if(ccLastFour == null || orderEmail == null) {
@@ -113,14 +117,27 @@ public class CartOrder extends BaseEntity {
 
     public void addOrderIncident(OrderIncident orderIncident) {
         orderIncident.setCartOrder(this);
-        //this.orderIncidents.add(orderIncident);
+        this.orderIncidents.add(orderIncident);
     }
 
     public String getCartEndpoint() {
-        return baseEndpoint + "/" + cartSystemId;
+        return baseEndpoint + "/" + cartOrderSystemId;
     }
 
     public boolean getIsManuallyApproved() {
         return isManuallyApproved;
+    }
+
+    public Object getOrderIncident(String status) {
+        for(OrderIncident orderIncident : orderIncidents) {
+            if(status.equals(orderIncident.getStatus())) {
+                return orderIncident;
+            }
+        }
+        return null;
+    }
+
+    public void removeOrderIncident(OrderIncident orderIncident) {
+        orderIncidents.remove(orderIncident);
     }
 }

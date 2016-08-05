@@ -11,6 +11,6 @@ public class Validators {
 
     @Bean
     public Validator beforeCreateOrderIncidentValidator() {
-        return new NewOrderIncidentValidator();
+        return new NewCartOrderValidator();
     }
 }

@@ -155,42 +155,41 @@ function d4dl_resource_watch_entity_update($entity, $type) {
     error_log("--- D4DL Entity is updated:\n" . json_encode($entity, JSON_PRETTY_PRINT));
     if(is_object($entity) && $entity->type == 'commerce_order') {
         $is_complete = isset($entity->data->commerce_payment_order_paid_in_full_invoked) && $entity->data->commerce_payment_order_paid_in_full_invoked;
-        $payload = array('action'=>'Complete' ? $is_complete : "Paid",
-            'cartOrder' => array(
-                'transactionId'=>$entity->order_number,
-                'shoppingCartId'=>'14',
-                'shoppingCartType'=>'drupal_commerce_rest',
-                'shoppingCartName'=>'D4DL Drupal Store',
-                'siteName'=>'D4DL Drupal Store',
-                'restClientId'=>'drupal',
-                'processDefinitionKey' => variable_get('d4dl_resource_watch_process_key'),
-                'cartSystemId'=>$entity->order_id,
-                'cartSystemQualifier'=>$entity->revision_id,
-                'amount'=>$entity->commerce_order_total['und'][0]['amount'] / 100
-            ),
+        $payload = array(
+            'transactionId'=>$entity->order_number,
+            'restClientId'=>'drupalDemoClient',
+            'shoppingCartType'=>'drupal_commerce_rest',
             'status'=>$entity->status,
+            'orderTag'=>'cart',
+            'shoppingCartId'=>'demoClientDrupalStore',
+            'shoppingCartName'=>'D4DL Drupal Store',
+            'cartOrderSystemId'=>$entity->order_id,
+            'cartOrderSystemQualifier'=>$entity->revision_id,
+            'siteName'=>'D4DL Drupal Store',
+            'processDefinitionKey' => variable_get('d4dl_resource_watch_process_key'),
+            'amount'=>$entity->commerce_order_total['und'][0]['amount'] / 100
         );
-        $to_debug = $entity->commerce_order_total['und'][0];
-        error_log("DEBUGGING AMOUNT:\n" .  json_encode($to_debug, JSON_PRETTY_PRINT));
-
-        $url = "http://remanplanet.com:8180/api/orderIncidents";
-        $options = array(
-            'method' => 'POST',
-            'headers' => array('Content-Type' => 'application/json','Authorization'=>'Basic amRlZm9yZDpPcGVuU2VzYW1l'),
-            'data' => json_encode($payload)
-        );
-        error_log("Sending resource request to " . json_encode($options, JSON_PRETTY_PRINT));
-        $response = drupal_http_request($url, $options);
-
-        if (is_object($response) && !empty($response->data)) {
-            // Extract all the parameters received in the response.
-            $parameters = explode('&', $response->data);
-            foreach ($parameters as $parameter) {
-                list($post_attribute, $post_value) = explode('=', $parameter);
-                $return[$post_attribute] = urldecode($post_value);
-            }
-        }
+        $orderResponse = _d4dl_resource_watch_post_payload($payload, "cartOrders");
     }
+}
+
+/**
+ * @param $payload
+ * @return mixed
+ */
+function _d4dl_resource_watch_post_payload($payload, $entity)
+{
+    $url = variable_get('d4dl_resource_watch_endpoint')."/$entity";
+    $options = array(
+        'method' => 'POST',
+        'headers' => array('Content-Type' => 'application/json', 'Authorization' => 'Basic amRlZm9yZDpPcGVuU2VzYW1l'),
+        'data' => json_encode($payload)
+    );
+    error_log("Sending resource request to $url\n " . json_encode($options, JSON_PRETTY_PRINT));
+    $response = drupal_http_request($url, $options);
+    $responseObject = json_encode($response);
+    error_log("Received object \n" . json_encode($response, JSON_PRETTY_PRINT));
+    return $responseObject;
 }
 
 /**
@@ -249,7 +248,7 @@ function d4dl_resource_watch_form($form, &$form_state) {
     $form['d4dl_resource_watch_endpoint'] = array(
         '#type' => 'textfield',
         '#title' => t('Endpoint URL'),
-        '#default_value' => variable_get('d4dl_resource_watch_endpoint', 'http://remanplanet.com:8180/'),
+        '#default_value' => variable_get('d4dl_resource_watch_endpoint', 'http://remanplanet.com:8180'),
         '#size' => 60,
         '#description' => t('The d4dl service endpoint.'),
         '#required' => TRUE,
