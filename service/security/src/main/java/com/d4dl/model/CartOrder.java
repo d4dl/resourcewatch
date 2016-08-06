@@ -30,13 +30,12 @@ public class CartOrder extends BaseEntity {
     private String transactionId;
     private String processDefinitionKey;//The process definition that handles these kinds of incidents per the client request
     private String cartOrderSystemId;
-    private String status;
-    private String cartOrderSystemQualifier;
+    private String status;;
     private String shoppingCartType;
     private String shoppingCartId;
     private String shoppingCartName;
     private String siteName;
-    private String restClientId;
+    private String tenantId;
     private BigDecimal amount;
 
     @Autowired
@@ -57,13 +56,11 @@ public class CartOrder extends BaseEntity {
     public CartOrder() {
     }
 
-    public CartOrder(String orderId, String revisionId) {
-        this.cartOrderSystemId = orderId;
-        this.cartOrderSystemQualifier = revisionId;
+    public CartOrder(String orderId) {
+        this.cartOrderSystemId = orderId;;
     }
 
-    @JsonIgnore
-    public boolean getIsCCAndEmailWhitelisted() {
+    public boolean determineCCAndEmailWhitelisting() {
         String orderEmail = getOrderEmail();
         Logger.getLogger(this.getClass().getName()).info("Checking if " + orderEmail + " and " + ccLastFour + " is whitelisted.");
         if(ccLastFour == null || orderEmail == null) {
@@ -95,6 +92,7 @@ public class CartOrder extends BaseEntity {
         }
     }
 
+    @JsonIgnore
     private String getOrderEmail() {
         return (this.email == null && customer != null) ? customer.getEmail() : this.email;
     }

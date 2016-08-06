@@ -40,7 +40,7 @@ class D4DL_ResourceWatch_Model_Export
                     "cartSystemId"=>$order->getRealOrderId(),
                     "amount"=>$order->getTotalDue(),
                     'siteName'=>'Magento Drupal Store',
-                    'restClientId'=>'magento',
+                    'tenantId'=>'magentoDemo',
                     'processDefinitionKey' => Mage::getStoreConfig(self::RESOURCE_WATCH_PROCESS_KEY),
                 ),
                 "status"=>$order->getStatusLabel(),

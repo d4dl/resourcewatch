@@ -27,28 +27,25 @@ public class HardCodedDrupalStuff {
         String orderId = "29";
         String status = "TESTING22";
         String revisionId = "134";
-
-
-        new HardCodedDrupalStuff().updateOrder(new CartOrder(orderId, revisionId), status);
+        new HardCodedDrupalStuff().updateOrder(new CartOrder(orderId), status);
     }
 
     public OrderIncident updateOrder(CartOrder order, String status) throws URISyntaxException {
         String cookie = fetchCooke();
         String token = fetchToken(cookie);
         RestTemplate restTemplate = new RestTemplate();
-        updateStatus(order.getCartOrderSystemId(), order.getCartOrderSystemQualifier(), status, cookie, token, restTemplate);
+        updateStatus(order.getCartOrderSystemId(), status, cookie, token, restTemplate);
         OrderIncident incident = new OrderIncident();
         incident.setIncidentType(OrderIncident.IncidentType.AUTO_PROCESS_STATE_CHANGE);
         incident.setCartOrder(order);
-        incident.setAction("UPDATE_STATUS");
         return incident;
     }
 
-    private void updateStatus(String orderId, String revisionId, String status, String cookie, String token, RestTemplate restTemplate) {
+    private void updateStatus(String orderId, String status, String cookie, String token, RestTemplate restTemplate) {
         MultiValueMap<String, String> headers = initHeaders(cookie);
         headers.add(X_CSRF_TOKEN, token);
 
-        HttpEntity<Map<String, String>> entity = new HttpEntity(getUpdateOrderPayload(orderId, revisionId, status), headers);
+        HttpEntity<Map<String, String>> entity = new HttpEntity(getUpdateOrderPayload(orderId, status), headers);
         String updateOrderURL = getUpdateOrderURL(orderId);
         restTemplate.put(updateOrderURL, entity);
     }
@@ -109,11 +106,9 @@ public class HardCodedDrupalStuff {
     //public static String DRUPAL_PASSWORD = "Quicks@nd1";
 
 
-    public Map<String, String> getUpdateOrderPayload(String orderId, String revision, String status) {
+    public Map<String, String> getUpdateOrderPayload(String orderId, String status) {
         Map<String, String> payload = new HashMap();
-        payload.put("revision_id", revision);
         payload.put("status", status);
-        payload.put("order_id", orderId);
         payload.put("order_id", orderId);
         payload.put("type", "commerce_order");
         //payload.put("username", DRUPAL_USERNAME);

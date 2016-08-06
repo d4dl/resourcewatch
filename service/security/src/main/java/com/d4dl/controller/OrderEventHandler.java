@@ -80,11 +80,11 @@ public class OrderEventHandler {
 
 	@HandleBeforeSave
 	public void saveCartOrder(CartOrder incomingOrder) {
-		CartOrder existingOrder = orderRepository.findByRestClientIdAndShoppingCartIdAndCartOrderSystemIdAndCartOrderSystemQualifier(
-				incomingOrder.getRestClientId(),
+        Logger.getLogger(this.getClass().getName()).info("Saving cart order: " + incomingOrder);
+		CartOrder existingOrder = orderRepository.findByTenantIdAndShoppingCartIdAndCartOrderSystemId(
+				incomingOrder.getTenantId(),
 				incomingOrder.getShoppingCartId(),
-				incomingOrder.getCartOrderSystemId(),
-				incomingOrder.getCartOrderSystemQualifier());
+				incomingOrder.getCartOrderSystemId());
         if(existingOrder != null) {
             if(!existingOrder.getStatus().equals(incomingOrder.getStatus())) {
                 boolean foundOrderWithStatus = false;
@@ -93,13 +93,22 @@ public class OrderEventHandler {
                 for(OrderIncident orderIncident : incomingOrder.getOrderIncidents()) {
                     if(orderIncident.getStatus().equals(incomingOrder.getStatus())) {
                         foundOrderWithStatus = true;
+                        Logger.getLogger(this.getClass().getName()).info("Found  order with status " + orderIncident.getStatus());
                     }
                 }
                 if(!foundOrderWithStatus) {
                     OrderIncident orderIncident = new OrderIncident(existingOrder, incomingOrder.getOrderTag().equalsIgnoreCase("cart") ? OrderIncident.IncidentType.CART_STATE_CHANGE : OrderIncident.IncidentType.AUTO_PROCESS_STATE_CHANGE, incomingOrder.getStatus());
                     this.orderIncidentRepository.save(orderIncident);
+                } else {
+                    Logger.getLogger(this.getClass().getName()).info("Didn't find order with status of " + incomingOrder);
                 }
-            }
+            } else {
+				Logger.getLogger(this.getClass().getName()).info(
+                        "Could not find order for: " +
+				        "tenantId: " + incomingOrder.getTenantId() +
+                        "shoppingCartId: " + incomingOrder.getShoppingCartId() +
+                        "cartOrderSystemQualifier: " +  incomingOrder.getCartOrderSystemId());
+			}
         }
 	}
 
