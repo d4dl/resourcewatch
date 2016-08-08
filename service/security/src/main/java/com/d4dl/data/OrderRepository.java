@@ -17,11 +17,18 @@ package com.d4dl.data;
 
 import com.d4dl.model.CartOrder;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+
+import java.util.List;
 
 /**
  */
 @RepositoryRestResource
 public interface OrderRepository extends PagingAndSortingRepository<CartOrder, Long> {
-    CartOrder findByRestClientIdAndShoppingCartIdAndCartOrderSystemIdAndCartOrderSystemQualifier(String restClientId, String shoppingCartId, String cartSystemId, String cartSystemQualifier);
+    CartOrder findByTenantIdAndShoppingCartIdAndCartOrderSystemId(
+            @Param("tenantId") String tenantId,
+            @Param("shoppingCartId") String shoppingCartId,
+            @Param("cartOrderSystemId") String cartSystemId);
+    List<CartOrder> findByTenantId(@Param("tenantId") String tenantId);
 }

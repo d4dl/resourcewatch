@@ -34,6 +34,7 @@ public class OrderIncident extends BaseEntity {
     private IncidentType type;
     private String status;
     private String description;
+    private String cartOrderSystemQualifier;
 
     public enum IncidentType {
         CART_STATE_CHANGE,

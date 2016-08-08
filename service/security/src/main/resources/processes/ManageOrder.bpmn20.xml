@@ -26,15 +26,14 @@
     <sequenceFlow id="sid-F457EBEB-F798-4B5E-9075-94A846B0C386" sourceRef="sid-B651C35C-2C07-489C-BD4D-42E4DE1751E2" targetRef="sid-42C16C6F-1B3E-46DE-9C3A-70693B86F8C9"/>
     <sequenceFlow id="sid-BB49B86E-C157-419C-A27D-F23BB1CE9823" sourceRef="sid-E010DE03-CC36-4AB2-8EA6-FA92C8C562DD" targetRef="sid-616423E0-DF12-45F6-9E4E-51B4136673F4"/>
     <sequenceFlow id="sid-28925D3F-90D3-4B08-8562-06D77D3B06FE" name="Yes" sourceRef="sid-28F5C9DD-4A6C-4C1C-AB56-F5F648C50EE2" targetRef="sid-B651C35C-2C07-489C-BD4D-42E4DE1751E2">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${cartOrder.isCCAndEmailWhitelisted}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${cartOrder.determineCCAndEmailWhitelisting()}]]></conditionExpression>
     </sequenceFlow>
     <exclusiveGateway id="sid-6B8445D7-928D-4865-BD05-6B9ECE5BB5CE" default="sid-010F8DFA-8C64-4454-9E42-36EAF4409820"/>
     <exclusiveGateway id="sid-B651C35C-2C07-489C-BD4D-42E4DE1751E2"/>
     <sequenceFlow id="sid-7AE92143-C06D-4245-90AC-64B365208CEF" name="No" sourceRef="sid-28F5C9DD-4A6C-4C1C-AB56-F5F648C50EE2" targetRef="sid-8AB43769-30DB-4A1E-B919-F3E6269D43E1">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!cartOrder.isCCAndEmailWhitelisted}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!cartOrder.determineCCAndEmailWhitelisting()}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="sid-633F3754-3195-4386-BF56-58FBEFB4FB2C" name="Approved" sourceRef="sid-6B8445D7-928D-4865-BD05-6B9ECE5BB5CE" targetRef="sid-E010DE03-CC36-4AB2-8EA6-FA92C8C562DD">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${cartOrder.isManuallyApproved}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="sid-010F8DFA-8C64-4454-9E42-36EAF4409820" name="Denied" sourceRef="sid-6B8445D7-928D-4865-BD05-6B9ECE5BB5CE" targetRef="sid-B651C35C-2C07-489C-BD4D-42E4DE1751E2"/>
   </process>

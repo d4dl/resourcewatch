@@ -36,13 +36,11 @@ public class DatabaseLoader implements CommandLineRunner {
 	private final WhitelistAttributeRepository whitelistAttributeRepository;
 	private final ManagerRepository managers;
 	private final OrderRepository orderRepository;
-	private final OrderIncidentRepository orderIncidentRepository;
 	private final CustomerRepository customerRepository;
 
 	@Autowired
 	public DatabaseLoader(OrderRepository orderRepository,
 						  EmployeeRepository employeeRepository,
-						  OrderIncidentRepository incidentRepository,
 						  ManagerRepository managerRepository,
 						  CustomerRepository customerRepository,
 						  WhitelistAttributeRepository whitelistAttributeRepository) {
@@ -50,7 +48,6 @@ public class DatabaseLoader implements CommandLineRunner {
 		this.employees = employeeRepository;
 		this.orderRepository = orderRepository;
 		this.managers = managerRepository;
-		this.orderIncidentRepository = incidentRepository;
 		this.customerRepository = customerRepository;
 		this.whitelistAttributeRepository = whitelistAttributeRepository;
 	}
@@ -81,15 +78,14 @@ public class DatabaseLoader implements CommandLineRunner {
 		cartOrder.setEmail("jdeford@gmail.com");
 		cartOrder.whiteListCCAndEmail(whitelistAttributeRepository);
 
-		OrderIncident orderIncident = new OrderIncident(cartOrder, OrderIncident.IncidentType.MANUAL_STATE_CHANGE, "initialize");
+		OrderIncident orderIncident = new OrderIncident(cartOrder, OrderIncident.IncidentType.MANUAL_STATE_CHANGE, "nostatus");
 		cartOrder.setAction("Init System");
 		cartOrder.setAmount(new BigDecimal(0));
 		cartOrder.setTransactionId("653064af-8c9d-496f");
 		cartOrder.setShoppingCartName("Resource Matcher");
 		orderIncident.setDescription("Resource Matcher Processing Orders");
 		cartOrder.addOrderIncident(orderIncident);
-		cartOrder = orderRepository.save(cartOrder);
-		//orderIncidentRepository.save(orderIncident);
+		orderRepository.save(cartOrder);
 		//this.employees.save(new Employee("Samwise", "Gamgee", "gardener", oliver));
 		//this.employees.save(new Employee("Merry", "Brandybuck", "pony rider", oliver));
 		//this.employees.save(new Employee("Peregrin", "Took", "pipe smoker", oliver));

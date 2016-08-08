@@ -32,8 +32,6 @@ public interface OrderIncidentRepository extends PagingAndSortingRepository<Orde
 
 	@Override
 	void delete(@Param("id") Long id);
-
-    OrderIncident findByRestClientIdAndShoppingCartIdAndCartOrderSystemIdAndCartOrderSystemQualifierAndStatus(String restClientId, String shoppingCartId, String cartOrderSystemId, String cartOrderSystemQualifier);
 }
 
 // end::code[]
