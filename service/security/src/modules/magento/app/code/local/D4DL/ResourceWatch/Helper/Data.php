@@ -11,16 +11,16 @@ class D4DL_ResourceWatch_Helper_Data extends Mage_Payment_Helper_Data
 
     /**
      */
-    public function _postOrderDetails($host, $parameter)
+    public function _postOrderDetails($host, $json)
     {
-        error_log("Magento client posting to $host: \n" . json_encode($parameter, JSON_PRETTY_PRINT));
-        $client = new Varien_Http_Client();
-        $client->setUri($host)
+        $url = $host . "/cartOrders";
+        error_log("Magento client posting to $url: \n" . json_encode($json, JSON_PRETTY_PRINT));
+        $client = new Zend_Http_Client();
+        $client->setUri($url)
             ->setConfig(array('timeout' => 30))
-            ->setHeaders('accept-encoding', 'application/json')
-            ->setParameterPost($parameter)
-            ->setMethod(Zend_Http_Client::POST);
-        $request = $client->request();
+            ->setHeaders(array('Content-type: application/json', 'Authorization: Basic amRlZm9yZDpPcGVuU2VzYW1l', 'Accept-Encoding: application/json'));
+        $client->setRawData(json_encode($json), 'application/json');
+        $request = $client->request(Zend_Http_Client::POST);
         // Workaround for pseudo chunked messages which are yet too short, so
         // only an exception is is thrown instead of returning raw body
         if (!preg_match("/^([\da-fA-F]+)[^\r\n]*\r\n/sm", $request->getRawBody(), $m))

@@ -73,6 +73,7 @@
     "postcss-loader": "^0.6.0",
     "postcss-nested": "^1.0.0",
     "react": "^0.13.3",
+    "react-addons-css-transition-group": "^15.3.0",
     "react-bootstrap": "0.25.2",
     "react-bootstrap-table": "^2.3.9",
     "react-modal": "^0.5.0",

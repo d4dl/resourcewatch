@@ -95,8 +95,8 @@ public class ResourceWatchingApplication implements RepositoryRestConfigurer {
 			}
 
 			public void validate(Object target, Errors errors) {
-				Logger.getLogger(getClass().getName()).info("Validating cartOrder " + target);
 				CartOrder incomingOrder = (CartOrder) target;
+				Logger.getLogger(getClass().getName()).info("Validating cartOrder " + incomingOrder.getId() + " " + incomingOrder.getStatus());
 				CartOrder existingOrder = orderRepository.findByTenantIdAndShoppingCartIdAndCartOrderSystemId(
 						incomingOrder.getTenantId(),
 						incomingOrder.getShoppingCartId(),

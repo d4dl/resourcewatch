@@ -1,4 +1,5 @@
 <?php
+const HARD_CODED_AUTHORIZATION = 'amRlZm9yZDpPcGVuU2VzYW1l';
 /**
  * Implements hook_help().
  *
@@ -113,7 +114,7 @@ function d4dl_resource_watch_entity_update($entity, $type) {
      POST to: {"username": "admin", "password": "Quicks@nd1"}
      http://remanplanet.com/drupal/api/1.0/user/token.json
      *
-     PUT this
+     PATCH this
     {
     "revision_id": "134",
     "status": "complete50",
@@ -144,20 +145,53 @@ function d4dl_resource_watch_entity_update($entity, $type) {
 
     // Update the entity's entry in a fictional table of all entities.
     $info = entity_get_info($type);
-    error_log("--- D4DL Entity is updated:\n" . json_encode($entity, JSON_PRETTY_PRINT));
-    $currentOrder = _d4dl_resource_watch_post_payload(array(), "cartOrders/search/findByTenantIdAndShoppingCartIdAndCartOrderSystemId?".
-                                                      "tenantId=drupalDemoClient&shoppingCartId=demoClientDrupalStore&cartOrderSystemId=".$entity->order_number, "GET");
-    if(is_object($entity) && $entity->type == 'commerce_order') {
-        $is_complete = isset($entity->data->commerce_payment_order_paid_in_full_invoked) && $entity->data->commerce_payment_order_paid_in_full_invoked;
-        $payload = _d4dl_resource_watch_create_d4dl_order_payload($entity);
-        if($currentOrder != null) {
-            $payload->_links->self->href = $currentOrder->_links->self->href;
-            $orderResponse = _d4dl_resource_watch_post_payload($payload, "cartOrders", "PATCH");
-        } else {
-            $orderResponse = _d4dl_resource_watch_post_payload($payload, "cartOrders");
+    //error_log("--- D4DL Entity is updated:\n" . json_encode($entity, JSON_PRETTY_PRINT));
+    if($entity->type == 'commerce_order') {
+        //error_log("--- D4DL Entity is updated");
+        $order_id = $entity->order_number;
+        $currentOrder = _d4dl_resource_watch_fetch_order($order_id);
+        if(is_object($entity) && $entity->type == 'commerce_order') {
+            $is_complete = isset($entity->data->commerce_payment_order_paid_in_full_invoked) && $entity->data->commerce_payment_order_paid_in_full_invoked;
+            $payload = _d4dl_resource_watch_create_d4dl_order_payload($entity);
+            if($currentOrder != null) {
+                if(isset($currentOrder->_links->self->href)) {
+                    $orderResponse = _d4dl_resource_watch_post_payload($payload, $currentOrder->_links->self->href, "PATCH");
+                }
+            } else {
+                $orderResponse = _d4dl_resource_watch_post_payload($payload, "cartOrders");
+            }
         }
     }
 }
+
+/**
+ * @param $order_id
+ * @return mixed
+ */
+function _d4dl_resource_watch_fetch_order($order_id)
+{
+    $currentOrder = _d4dl_resource_watch_post_payload(array(), "cartOrders/search/findByTenantIdAndShoppingCartIdAndCartOrderSystemId?" .
+        "tenantId=drupalDemoClient&shoppingCartId=demoClientDrupalStore&cartOrderSystemId=" . $order_id, "GET");
+    return $currentOrder;
+}
+
+function d4dl_resource_watch_commerce_payment_transaction_presave($payment) {
+    $currentOrder = _d4dl_resource_watch_fetch_order($payment->order_id);
+    if($currentOrder) {
+        error_log("Payment information\n " . json_encode($payment, JSON_PRETTY_PRINT));
+        $message_variables = $payment->message_variables;
+        $payload = (object)array(
+            'ccLastFour'           => substr($message_variables['@number'], -4),
+            'payment_method'       => $payment->payment_method,
+            'tenantId'             => 'drupalDemoClient',
+            'shoppingCartId'       => 'demoClientDrupalStore',
+            'cartOrderSystemId'    => $payment->order_id,
+            'amount'               => $payment->amount / 100
+        );
+        $orderResponse = _d4dl_resource_watch_post_payload($payload, $currentOrder->_links->self->href, "PATCH");
+    }
+}
+
 
 /**
  * @param $entity
@@ -165,12 +199,16 @@ function d4dl_resource_watch_entity_update($entity, $type) {
  */
 function _d4dl_resource_watch_create_d4dl_order_payload($entity)
 {
+    $status = $entity->status;
+    $status_title = commerce_order_statuses()[$status]['title'];
     $payload = array(
         'transactionId'        => $entity->order_number,
         'tenantId'             => 'drupalDemoClient',
         'shoppingCartId'       => 'demoClientDrupalStore',
         'cartOrderSystemId'    => $entity->order_id,
-        'status'               => $entity->status,
+        'email'                => $entity->mail,
+        'status'               => isset($status_title) ? $status_title : $status,
+        'log'                  => $entity->log,
         'orderTag'             => 'cart',
         'shoppingCartType'     => 'drupal_commerce_rest',
         'shoppingCartName'     => 'D4DL Drupal Store',
@@ -178,30 +216,59 @@ function _d4dl_resource_watch_create_d4dl_order_payload($entity)
         'processDefinitionKey' => variable_get('d4dl_resource_watch_process_key'),
         'amount'               => $entity->commerce_order_total['und'][0]['amount'] / 100
     );
-    return $payload;
+    if(isset($entity->commerce_payment)) {
+        $payload['paymentMethod'] = $entity->commerce_payment->payment_method;
+    }
+    if(isset($entity->commerce_order->payment_details->credit_card)) {
+        $payload['ccLastFour'] = substr($entity->commerce_order->payment_details->credit_card, -4);
+    }
+
+    return (object)$payload;
 }
 
+function d4dl_resource_watch_commerce_order_status_info_alter(&$order_statuses) {
+    $order_statuses['ok_to_ship'] = array(
+        'name' => 'ok_to_ship',
+        'title' => t('Ok To Ship'),
+        'state' => 'pending',
+        'cart' => FALSE,
+        'weight' => 10,
+    );
+}
+
+function d4dl_resource_watch_commerce_payment_transaction_status_info(&$transaction_statuses) {
+    $transaction_statuses['ok_to_ship'] = array(
+        'status' => 'ok_to_ship',
+        'title' => t('Ok To Ship'),
+        'icon' => drupal_get_path('module', 'commerce_payment') . '/theme/icon-success.png',
+        'total' => TRUE,
+    );
+}
 
 /**
  * @param $payload
  * @return mixed
  */
-function _d4dl_resource_watch_post_payload($payload, $entity, $method="POST")
+function _d4dl_resource_watch_post_payload($payload, $entityRef, $method="POST")
 {
-    $url = variable_get('d4dl_resource_watch_endpoint')."/$entity";
+    error_log("Hard coded authorization!!!");
+    $url = ($method == "PATCH" || $method == "PUT") ? $entityRef : variable_get('d4dl_resource_watch_endpoint')."/$entityRef";
     $options = array(
         'method' => $method,
-        'headers' => array('Content-Type' => 'application/json', 'Authorization' => 'Basic amRlZm9yZDpPcGVuU2VzYW1l'),
+        'headers' => array('Content-Type' => 'application/json', 'Authorization' => 'Basic ' . HARD_CODED_AUTHORIZATION . ''),
         'data' => json_encode($payload)
     );
     error_log("Sending resource request to $url\n " . json_encode($options, JSON_PRETTY_PRINT));
-    $response = drupal_http_request($url, $options);
-    if($response.code == "404") {
+    $responseObject = drupal_http_request($url, $options);
+    if($responseObject->code == "404") {
        return null;
     } else {
-        $responseObject = json_encode($response, JSON_FORCE_OBJECT);
-        error_log("Received object \n" . json_encode($response, JSON_PRETTY_PRINT));
-        return json_encode($responseObject->data, JSON_FORCE_OBJECT);
+        error_log("Module received response object \n" . json_encode($responseObject, JSON_PRETTY_PRINT));
+        if(is_object($responseObject) && isset($responseObject->data)) {
+            return json_decode($responseObject->data, false);
+        } else {
+            error_log("Module received a non-object or data wasn't set: " . gettype($responseObject));
+        }
     }
 }
 
@@ -238,15 +305,18 @@ function _d4dl_resource_watch_page() {
 }
 
 function d4dl_resource_watch_update() {
-    $received = file_get_contents("drupal://input");
-    $received = json_decode($received, JSON_FORCE_OBJECT);
-    $order = commerce_order_load($received->id);
+    $received = file_get_contents('php://input');
+    $received = json_decode($received, false);
+    $order = commerce_order_load($received->cartOrderSystemId);
     // Do not update the status if the order is already at it.
+    error_log("The Module Debugging order:\n" . json_encode($order, JSON_PRETTY_PRINT));
+    error_log("Debugging received:\n" . json_encode($received, JSON_PRETTY_PRINT));
     if ($order->status != $received->status) {
-        $order->status   = $received->status;
-        $order->log      = 'AuoUpdate';
-        $order->revision = TRUE;
-        commerce_order_save($order);
+        $updated = commerce_order_status_update($order, $received->status, FALSE, TRUE, "D4DL Auto Status update to " . $received->status);
+        //$updated = commerce_order_status_update($order, 'pending', FALSE, TRUE, "D4DL Auto Status update to " . $received->status);
+        commerce_order_save($updated);
+    } else {
+        error_log("Statuses were the same. order: '" . $order->status . "'' received: '" . $received->status . "'");
     }
     drupal_add_html_head('Content-Type: application/json');
     $payload = _d4dl_resource_watch_create_d4dl_order_payload($order);
@@ -294,7 +364,29 @@ function d4dl_resource_watch_form($form, &$form_state) {
         '#title' => t('Process Key'),
         '#default_value' => variable_get('d4dl_resource_watch_process_key', 'eu_fraud_wary_process'),
         '#size' => 60,
+        '#description' => t('A secure token provided by DeFord Logistics.'),
+        '#required' => TRUE,
+    );
+    $form['d4dl_resource_watch_tenant_token'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Tenant Token'),
+        '#default_value' => variable_get('d4dl_resource_watch_tenant_token', '9c3dbb5567f646cb9a2fe284b26e53c8b11fb04c62374122b5626d20067f6025'),
+        '#size' => 60,
         '#description' => t('The key for the workflow process that will process watched orders.'),
+        '#required' => TRUE,
+    );
+    $form['d4dl_resource_watch_username'] = array(
+        '#type' => 'textfield',
+        '#title' => t('D4DL Username'),
+        '#size' => 60,
+        '#description' => t('Username for the DeFord Logistics Resource Watch service.'),
+        '#required' => TRUE,
+    );
+    $form['d4dl_resource_watch_password'] = array(
+        '#type' => 'textfield',
+        '#title' => t('D4DL Password'),
+        '#size' => 60,
+        '#description' => t('Password for the DeFord Logistics Resource Watch service.'),
         '#required' => TRUE,
     );
 

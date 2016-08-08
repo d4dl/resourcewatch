@@ -1,15 +1,15 @@
 import React from 'react';
 import AsyncElement from '../../../common/AsyncElement';
 
-var PreOrderIncidents = React.createClass({
+var PreCartOrders = React.createClass({
 
   mixins: [ AsyncElement ],
 
-  bundle: require('bundle?lazy!./OrderIncidents.jsx'),
+  bundle: require('bundle?lazy!./CartOrders.jsx'),
 
   preRender: function () {
   	return <div></div>;
   }
 });
 
-export default PreOrderIncidents;
+export default PreCartOrders;

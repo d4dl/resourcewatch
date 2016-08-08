@@ -3,8 +3,8 @@ package com.d4dl.model;
 import com.d4dl.data.WhitelistAttributeRepository;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -23,25 +23,29 @@ public class CartOrder extends BaseEntity {
     public static final String CART_ORDER = "cartOrder";
     private boolean isManuallyApproved;
     private String processInstanceId;
+    private String paymentMethod;
     private String baseEndpoint;
     private String orderTag;
+    private String log;
+    private String url;
 
     private String action;
     private String transactionId;
     private String processDefinitionKey;//The process definition that handles these kinds of incidents per the client request
     private String cartOrderSystemId;
-    private String status;;
+    private String status;
     private String shoppingCartType;
     private String shoppingCartId;
     private String shoppingCartName;
     private String siteName;
     private String tenantId;
+    private boolean shouldWhitelist;
+    private boolean isWhitelisted;
+    private String shippingAddress;
+    private String billingAddress;
+    private boolean workflowComplete;
     private BigDecimal amount;
 
-    @Autowired
-    @Transient
-    @JsonIgnore
-    private WhitelistAttributeRepository whitelistAttributeRepository;
 
     @OneToMany(cascade = CascadeType.MERGE, mappedBy = CART_ORDER, fetch = FetchType.EAGER)
     private List<OrderIncident> orderIncidents = new ArrayList();
@@ -56,38 +60,45 @@ public class CartOrder extends BaseEntity {
     public CartOrder() {
     }
 
-    public CartOrder(String orderId) {
-        this.cartOrderSystemId = orderId;;
-    }
-
-    public boolean determineCCAndEmailWhitelisting() {
+    public boolean determineCCAndEmailWhitelisting(WhitelistAttributeRepository whitelistAttributeRepository) {
         String orderEmail = getOrderEmail();
         Logger.getLogger(this.getClass().getName()).info("Checking if " + orderEmail + " and " + ccLastFour + " is whitelisted.");
-        if(ccLastFour == null || orderEmail == null) {
+        if (ccLastFour == null || orderEmail == null) {
             return false;
         }
 
-        Map<String, String> attrMap = fetchCCEmailWhitelistMap(orderEmail);
+        Map<String, String> attrMap = fetchCCEmailWhitelistMap(orderEmail, whitelistAttributeRepository);
         return (ccLastFour.equals(attrMap.get("ccLastFour")) && orderEmail.equals(attrMap.get("email")));
     }
 
-    @JsonIgnore
-    public void whiteListCCAndEmail() {
-        whiteListCCAndEmail(whitelistAttributeRepository);
+
+
+    @PostConstruct
+    public void postCreate() {
+        if (shoppingCartType.equals("drupal_commerce_rest")) {
+            url = HardCodedDrupalStuff.ORDERS_URL + cartOrderSystemId;
+        } else if (shoppingCartType.equals("magento_commerce_rest")) {
+            url = HardCodedMagentoStuff.ORDERS_URL + cartOrderSystemId;
+        }
+        Logger.getLogger(this.getClass().getName()).info("Postprocessed order: " + url);
+    }
+
+    public CartOrder(String orderId, String url) {
+        this.cartOrderSystemId = orderId;
     }
 
     @JsonIgnore
     public void whiteListCCAndEmail(WhitelistAttributeRepository whitelistAttributeRepository) {
         String orderEmail = getOrderEmail();
-        if(ccLastFour == null || orderEmail == null) {
+        if (ccLastFour == null || orderEmail == null) {
             return;
         }
 
         Map<String, String> attrMap = fetchCCEmailWhitelistMap(orderEmail, whitelistAttributeRepository);
-        if(!ccLastFour.equals(attrMap.get("ccLastFour"))) {
+        if (!ccLastFour.equals(attrMap.get("ccLastFour"))) {
             whitelistAttributeRepository.save(new WhitelistAttribute(customer, "ccLastFour", ccLastFour));
         }
-        if(orderEmail.equals(attrMap.get("email"))) {
+        if (orderEmail.equals(attrMap.get("email"))) {
             whitelistAttributeRepository.save(new WhitelistAttribute(customer, "email", email));
         }
     }
@@ -98,10 +109,6 @@ public class CartOrder extends BaseEntity {
     }
 
 
-    private Map<String, String> fetchCCEmailWhitelistMap(String email) {
-        return fetchCCEmailWhitelistMap(email, this.whitelistAttributeRepository);
-    }
-
     private Map<String, String> fetchCCEmailWhitelistMap(String email, WhitelistAttributeRepository whitelistAttributeRepository) {
         List<WhitelistAttribute> whitelistAttributes = whitelistAttributeRepository.findByCustomerAndNameInAndValueIn(
                 customer,
@@ -109,7 +116,7 @@ public class CartOrder extends BaseEntity {
                 new String[]{ccLastFour, email});
         Map<String, String> attrMap = new HashMap();
 
-        for (WhitelistAttribute attr : whitelistAttributes) attrMap.put(attr.getName(),attr.getValue());
+        for (WhitelistAttribute attr : whitelistAttributes) attrMap.put(attr.getName(), attr.getValue());
         return attrMap;
     }
 
@@ -119,6 +126,11 @@ public class CartOrder extends BaseEntity {
     }
 
     public String getCartEndpoint() {
+        if (shoppingCartType.equals("drupal_commerce_rest")) {
+            url = HardCodedDrupalStuff.ORDERS_URL + cartOrderSystemId;
+        } else if (shoppingCartType.equals("magento_commerce_rest")) {
+            url = HardCodedMagentoStuff.ORDERS_URL + cartOrderSystemId;
+        }
         return baseEndpoint + "/" + cartOrderSystemId;
     }
 
@@ -127,8 +139,8 @@ public class CartOrder extends BaseEntity {
     }
 
     public Object getOrderIncident(String status) {
-        for(OrderIncident orderIncident : orderIncidents) {
-            if(status.equals(orderIncident.getStatus())) {
+        for (OrderIncident orderIncident : orderIncidents) {
+            if (status.equals(orderIncident.getStatus())) {
                 return orderIncident;
             }
         }

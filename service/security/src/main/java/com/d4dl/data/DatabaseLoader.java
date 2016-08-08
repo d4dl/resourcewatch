@@ -15,15 +15,14 @@
  */
 package com.d4dl.data;
 
-import com.d4dl.model.*;
+import com.d4dl.model.Employee;
+import com.d4dl.model.Manager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-
-import java.math.BigDecimal;
 
 /**
  *
@@ -55,8 +54,14 @@ public class DatabaseLoader implements CommandLineRunner {
 	@Override
 	public void run(String... strings) throws Exception {
 
-		Manager greg = this.managers.save(new Manager("jdeford", "OpenSesame",
-							"ROLE_MANAGER"));
+		Manager lenny = new Manager("lenny", "repair", "ROLE_MANAGER");
+		lenny.setRoles(new String[]{"ROLE_MANAGER", "ORDER_PROCESSOR"});
+		Manager lenny1 = this.managers.save(lenny);
+
+        Manager manager = new Manager("jdeford", "OpenSesame", "ROLE_MANAGER");
+        manager.setRoles(new String[]{"ROLE_MANAGER", "ORDER_PROCESSOR"});
+        Manager myself = this.managers.save(manager);
+
 		//Manager oliver = this.managers.save(new Manager("oliver", "gierke",
 							//"ROLE_MANAGER"));
 
@@ -64,28 +69,13 @@ public class DatabaseLoader implements CommandLineRunner {
 			new UsernamePasswordAuthenticationToken("jdeford", "doesn't matter",
 				AuthorityUtils.createAuthorityList("ROLE_MANAGER")));
 
-		this.employees.save(new Employee("Frodo", "Baggins", "ring bearer", greg));
-		this.employees.save(new Employee("Bilbo", "Baggins", "burglar", greg));
-		this.employees.save(new Employee("Gandalf", "the Grey", "wizard", greg));
+		this.employees.save(new Employee("Frodo", "Baggins", "ring bearer", myself));
+		this.employees.save(new Employee("Bilbo", "Baggins", "burglar", myself));
+		this.employees.save(new Employee("Gandalf", "the Grey", "wizard", myself));
 
 		SecurityContextHolder.getContext().setAuthentication(
 			new UsernamePasswordAuthenticationToken("oliver", "doesn't matter",
 				AuthorityUtils.createAuthorityList("ROLE_MANAGER")));
-		CartOrder cartOrder = new CartOrder();
-		Customer customer = this.customerRepository.save(new Customer("Joshua", "Handlebar", null));
-		cartOrder.setCustomer(customer);
-		cartOrder.setCcLastFour("8908");
-		cartOrder.setEmail("jdeford@gmail.com");
-		cartOrder.whiteListCCAndEmail(whitelistAttributeRepository);
-
-		OrderIncident orderIncident = new OrderIncident(cartOrder, OrderIncident.IncidentType.MANUAL_STATE_CHANGE, "nostatus");
-		cartOrder.setAction("Init System");
-		cartOrder.setAmount(new BigDecimal(0));
-		cartOrder.setTransactionId("653064af-8c9d-496f");
-		cartOrder.setShoppingCartName("Resource Matcher");
-		orderIncident.setDescription("Resource Matcher Processing Orders");
-		cartOrder.addOrderIncident(orderIncident);
-		orderRepository.save(cartOrder);
 		//this.employees.save(new Employee("Samwise", "Gamgee", "gardener", oliver));
 		//this.employees.save(new Employee("Merry", "Brandybuck", "pony rider", oliver));
 		//this.employees.save(new Employee("Peregrin", "Took", "pipe smoker", oliver));

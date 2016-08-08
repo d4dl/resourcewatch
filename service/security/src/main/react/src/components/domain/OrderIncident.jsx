@@ -1,7 +1,7 @@
 import React from "react";
 import UpdateDialog from "../common/UpdateDialog"
 
-class Employee extends React.Component {
+class OrderIncident extends React.Component {
 
     constructor(props) {
         super(props);
@@ -12,24 +12,29 @@ class Employee extends React.Component {
         this.props.onDelete(this.props.orderIncident);
     }
 
+  /**
+   * - Link to order
+   * - Description of activiti
+   private boolean isManuallyApproved;
+
+   private IncidentType type;
+   private String status;
+   private String description;
+   private String cartOrderSystemQualifier;
+   */
     render() {
         return (
             <tr>
-                <td>{this.props.orderIncident.entity.shoppingCartName}</td>
-                <td>{this.props.orderIncident.entity.action}</td>
-                <td>{this.props.orderIncident.entity.transactionId}</td>
-                <td>{this.props.orderIncident.entity.amount}</td>
-                <td>{this.props.orderIncident.entity.description}</td>
-                <td>
-                    <UpdateDialog toUpdate={this.props.orderIncident}
-                                  attributes={this.props.attributes}
-                                  onUpdate={this.props.onUpdate}/>
-                </td>
-                <td>
-                    <button onClick={this.handleDelete}>Delete</button>
-                </td>
+              <td><a target="_blank" href={this.props.orderIncident.entity.cartOrder.url}>{this.props.orderIncident.entity.cartOrder.shoppingCartName}
+                - {this.props.orderIncident.entity.cartOrder.cartOrderSystemId}</a></td>
+              <td>{this.props.orderIncident.entity.type}</td>
+              <td>{this.props.orderIncident.entity.isManuallyApproved}</td>
+              <td><span style={{width: 100 + "px"}}>{this.props.orderIncident.entity.status}</span></td>
+
+              <td>{this.props.orderIncident.entity.description}</td>
+              <td>{this.props.orderIncident.entity.log}</td>
             </tr>
         )
     }
 }
-export default Employee
+export default OrderIncident

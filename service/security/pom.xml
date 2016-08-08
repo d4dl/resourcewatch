@@ -193,25 +193,25 @@
                     <workingDirectory>${basedir}/target/classes/static</workingDirectory>
                 </configuration>
                 <executions>
-                    <execution>
-                        <id>install node and npm</id>
-                        <goals>
-                            <goal>install-node-and-npm</goal>
-                        </goals>
-                        <configuration>
-                            <nodeVersion>v4.4.5</nodeVersion>
-                            <npmVersion>3.9.2</npmVersion>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>npm start</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>install</arguments>
-                        </configuration>
-                    </execution>
+                        <execution>
+                            <id>install node and npm</id>
+                            <goals>
+                                <goal>install-node-and-npm</goal>
+                            </goals>
+                            <configuration>
+                                <nodeVersion>v4.4.5</nodeVersion>
+                                <npmVersion>3.9.2</npmVersion>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>npm start</id>
+                            <goals>
+                                <goal>npm</goal>
+                            </goals>
+                            <configuration>
+                                <arguments>install</arguments>
+                            </configuration>
+                        </execution>
                     <!--
                     <execution>
                         <id>webpack build</id>

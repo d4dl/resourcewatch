@@ -20,78 +20,105 @@
         </helpers>
         <events>
             <!-- -->
-            <sales_order_place_after>
+            <sales_order_payment_pay>
                 <observers>
-                    <d4dl_resourcewatch>
+                    <d4dl_resourcewatch_payment_pay>
                         <class>d4dl_resourcewatch/observer</class>
                         <method>processEvent</method>
                         <type>singleton</type>
-                    </d4dl_resourcewatch>
+                    </d4dl_resourcewatch_payment_pay>
+                </observers>
+            </sales_order_payment_pay>
+            <sales_convert_quote_to_order>
+                <observers>
+                    <d4dl_resourcewatch_quote_to_order>
+                        <class>d4dl_resourcewatch/observer</class>
+                        <method>processEvent</method>
+                        <type>singleton</type>
+                    </d4dl_resourcewatch_quote_to_order>
+                </observers>
+            </sales_convert_quote_to_order>
+            <sales_order_place_after>
+                <observers>
+                    <d4dl_resourcewatch_after_order>
+                        <class>d4dl_resourcewatch/observer</class>
+                        <method>processEvent</method>
+                        <type>singleton</type>
+                    </d4dl_resourcewatch_after_order>
                 </observers>
             </sales_order_place_after>
             <sales_order_invoice_pay>
                 <observers>
-                    <d4dl_resourcewatch>
+                    <d4dl_resourcewatch_invoice_pay>
                         <class>d4dl_resourcewatch/observer</class>
                         <method>processEvent</method>
                         <type>singleton</type>
-                    </d4dl_resourcewatch>
+                    </d4dl_resourcewatch_invoice_pay>
                 </observers>
             </sales_order_invoice_pay>
-            <sales_order_invoice_pay>
+            <checkout_type_onepage_save_order_after>
                 <observers>
-                    <d4dl_resourcewatch>
+                    <d4dl_resourcewatch_save_order_after>
                         <class>d4dl_resourcewatch/observer</class>
                         <method>processEvent</method>
                         <type>singleton</type>
-                    </d4dl_resourcewatch>
+                    </d4dl_resourcewatch_save_order_after>
                 </observers>
-            </sales_order_invoice_pay>
+            </checkout_type_onepage_save_order_after>
+            <sales_convert_order_to_quote>
+                <observers>
+                    <d4dl_resourcewatch_creat_order_to_quote>
+                        <class>d4dl_resourcewatch/observer</class>
+                        <method>processEvent</method>
+                        <type>singleton</type>
+                    </d4dl_resourcewatch_creat_order_to_quote>
+                </observers>
+            </sales_convert_order_to_quote>
+            <adminhtml_sales_order_create_process_data>
+                <observers>
+                    <d4dl_resourcewatch_creat_process_data>
+                        <class>d4dl_resourcewatch/observer</class>
+                        <method>processEvent</method>
+                        <type>singleton</type>
+                    </d4dl_resourcewatch_creat_process_data>
+                </observers>
+            </adminhtml_sales_order_create_process_data>
             <checkout_onepage_controller_success_action>
                 <observers>
-                    <d4dl_resourcewatch>
+                    <d4dl_resourcewatch_controller_success>
                         <class>d4dl_resourcewatch/observer</class>
                         <method>processEvent</method>
                         <type>singleton</type>
-                    </d4dl_resourcewatch>
+                    </d4dl_resourcewatch_controller_success>
                 </observers>
             </checkout_onepage_controller_success_action>
             <sales_order_payment_capture>
                 <observers>
-                    <d4dl_resourcewatch>
+                    <d4dl_resourcewatch_payment_capture>
                         <class>d4dl_resourcewatch/observer</class>
                         <method>processEvent</method>
                         <type>singleton</type>
-                    </d4dl_resourcewatch>
+                    </d4dl_resourcewatch_payment_capture>
                 </observers>
             </sales_order_payment_capture>
             <sales_order_invoice_register>
                 <observers>
-                    <d4dl_resourcewatch>
+                    <d4dl_resourcewatch_invoice_register>
                         <class>d4dl_resourcewatch/observer</class>
                         <method>processEvent</method>
                         <type>singleton</type>
-                    </d4dl_resourcewatch>
+                    </d4dl_resourcewatch_invoice_register>
                 </observers>
             </sales_order_invoice_register>
             <checkout_cart_add_product_complete>
                 <observers>
-                    <d4dl_resourcewatch>
+                    <d4dl_resourcewatch_product_complete>
                         <class>d4dl_resourcewatch/observer</class>
                         <method>processEvent</method>
                         <type>singleton</type>
-                    </d4dl_resourcewatch>
+                    </d4dl_resourcewatch_product_complete>
                 </observers>
             </checkout_cart_add_product_complete>
-            <catalog_product_save_after>
-                <observers>
-                    <d4dl_resourcewatch>
-                        <class>d4dl_resourcewatch/observer</class>
-                        <method>processEvent</method>
-                        <type>singleton</type>
-                    </d4dl_resourcewatch>
-                </observers>
-            </catalog_product_save_after>
         </events>
 
     </global>

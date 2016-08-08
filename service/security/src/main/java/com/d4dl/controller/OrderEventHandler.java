@@ -18,6 +18,7 @@ package com.d4dl.controller;
 import com.d4dl.config.WebSocketConfiguration;
 import com.d4dl.data.OrderIncidentRepository;
 import com.d4dl.data.OrderRepository;
+import com.d4dl.data.WhitelistAttributeRepository;
 import com.d4dl.model.CartOrder;
 import com.d4dl.model.OrderIncident;
 import org.activiti.engine.RuntimeService;
@@ -41,34 +42,31 @@ import java.util.logging.Logger;
 public class OrderEventHandler {
 
 	private final SimpMessagingTemplate websocket;
+	public static final String HARD_CODED_STATUS = "pending";
 
 	private final EntityLinks entityLinks;
     private final OrderRepository orderRepository;
     private final OrderIncidentRepository orderIncidentRepository;
     private final RuntimeService runtimeService;
 
+    private WhitelistAttributeRepository whitelistAttributeRepository;
+
     @Autowired
-	public OrderEventHandler(SimpMessagingTemplate websocket, EntityLinks entityLinks, OrderRepository orderRepository, OrderIncidentRepository incidentRepository, RuntimeService runtimeService) {
+	public OrderEventHandler(SimpMessagingTemplate websocket, EntityLinks entityLinks, OrderRepository orderRepository, OrderIncidentRepository incidentRepository, RuntimeService runtimeService, WhitelistAttributeRepository whitelistAttributeRepository) {
 		this.websocket = websocket;
 		this.entityLinks = entityLinks;
 		this.orderRepository = orderRepository;
         this.orderIncidentRepository = incidentRepository;
         this.runtimeService = runtimeService;
+        this.whitelistAttributeRepository = whitelistAttributeRepository;
 	}
 
 	@HandleAfterCreate
 	public void newCartOrder(CartOrder incomingOrder) {
-		Logger.getLogger(this.getClass().getName()).info("Received CartOrder " + incomingOrder);
-		Logger.getLogger(this.getClass().getName()).info("Starting process instance");
+		Logger.getLogger(this.getClass().getName()).info("Starting process instance for " + incomingOrder);
 
-		Map<String, Object> startVariables = new HashMap();
-		startVariables.put(CartOrder.CART_ORDER, incomingOrder);
 		CartOrder newOrder = orderRepository.save(incomingOrder);
 
-		Logger.getLogger(this.getClass().getName()).info("Starting process instance for new order: " + incomingOrder);
-		ProcessInstance instance = runtimeService.startProcessInstanceByKey(newOrder.getProcessDefinitionKey(), startVariables);
-		newOrder.setProcessInstanceId(instance.getProcessInstanceId());
-		orderRepository.save(newOrder);
 		this.websocket.convertAndSend(WebSocketConfiguration.MESSAGE_PREFIX + "/newCartOrder", getPath(newOrder));
 	}
 
@@ -79,36 +77,63 @@ public class OrderEventHandler {
 	}
 
 	@HandleBeforeSave
+    @HandleBeforeCreate
 	public void saveCartOrder(CartOrder incomingOrder) {
         Logger.getLogger(this.getClass().getName()).info("Saving cart order: " + incomingOrder);
 		CartOrder existingOrder = orderRepository.findByTenantIdAndShoppingCartIdAndCartOrderSystemId(
 				incomingOrder.getTenantId(),
 				incomingOrder.getShoppingCartId(),
 				incomingOrder.getCartOrderSystemId());
+        boolean createIncident = false;
         if(existingOrder != null) {
-            if(!existingOrder.getStatus().equals(incomingOrder.getStatus())) {
+            if(existingOrder.getStatus() == null || incomingOrder.getStatus() == null || !existingOrder.getStatus().equals(incomingOrder.getStatus())) {
                 boolean foundOrderWithStatus = false;
                 Logger.getLogger(this.getClass().getName()).info("Found " + existingOrder + " for id " + incomingOrder.getCartOrderSystemId());
                 incomingOrder.setId(incomingOrder.getId());
                 for(OrderIncident orderIncident : incomingOrder.getOrderIncidents()) {
-                    if(orderIncident.getStatus().equals(incomingOrder.getStatus())) {
+                    String status = orderIncident.getStatus();
+                    if(status != null && status.equals(incomingOrder.getStatus())) {
                         foundOrderWithStatus = true;
-                        Logger.getLogger(this.getClass().getName()).info("Found  order with status " + orderIncident.getStatus());
+                        Logger.getLogger(this.getClass().getName()).info("Found  order with status " + status);
                     }
                 }
                 if(!foundOrderWithStatus) {
-                    OrderIncident orderIncident = new OrderIncident(existingOrder, incomingOrder.getOrderTag().equalsIgnoreCase("cart") ? OrderIncident.IncidentType.CART_STATE_CHANGE : OrderIncident.IncidentType.AUTO_PROCESS_STATE_CHANGE, incomingOrder.getStatus());
-                    this.orderIncidentRepository.save(orderIncident);
+                    createIncident = true;
                 } else {
                     Logger.getLogger(this.getClass().getName()).info("Didn't find order with status of " + incomingOrder);
                 }
             } else {
+                createIncident = true;
 				Logger.getLogger(this.getClass().getName()).info(
-                        "Could not find order for: " +
-				        "tenantId: " + incomingOrder.getTenantId() +
-                        "shoppingCartId: " + incomingOrder.getShoppingCartId() +
-                        "cartOrderSystemQualifier: " +  incomingOrder.getCartOrderSystemId());
+                        "Could not find order for ->\n " +
+				        "\ntenantId: " + incomingOrder.getTenantId() +
+                        "\nshoppingCartId: " + incomingOrder.getShoppingCartId() +
+                        "\ncartOrderSystemId: " +  incomingOrder.getCartOrderSystemId() +
+                        "\n status: " + incomingOrder.getStatus());
 			}
+            if(incomingOrder.isShouldWhitelist()) {
+                existingOrder.whiteListCCAndEmail(whitelistAttributeRepository);
+                incomingOrder.setWhitelisted(true);
+            }
+            if(!incomingOrder.isWhitelisted() && incomingOrder.determineCCAndEmailWhitelisting(whitelistAttributeRepository)) {
+                existingOrder.setWhitelisted(true);
+                incomingOrder.setWhitelisted(true);
+                this.orderRepository.save(existingOrder);
+            }
+        }
+        if(HARD_CODED_STATUS.equalsIgnoreCase(incomingOrder.getStatus())) {
+            Map<String, Object> startVariables = new HashMap();
+            startVariables.put(CartOrder.CART_ORDER, existingOrder);
+            ProcessInstance instance = runtimeService.startProcessInstanceByKey(existingOrder.getProcessDefinitionKey(), startVariables);
+            //runtimeService.sid/d(instance.getProcessInstanceId());
+            incomingOrder.setProcessInstanceId(instance.getProcessInstanceId());
+            Logger.getLogger(this.getClass().getName()).info("Started process instance for new order: " + instance.getProcessInstanceId());
+        }
+        if(createIncident && incomingOrder.getOrderTag() != null) {
+            OrderIncident.IncidentType incidentType = incomingOrder.getOrderTag().equalsIgnoreCase("cart") ? OrderIncident.IncidentType.CART_STATE_CHANGE : OrderIncident.IncidentType.AUTO_PROCESS_STATE_CHANGE;
+            OrderIncident orderIncident = new OrderIncident(existingOrder, incidentType, incomingOrder.getStatus());
+            orderIncident.setLog(incomingOrder.getLog());
+            this.orderIncidentRepository.save(orderIncident);
         }
 	}
 

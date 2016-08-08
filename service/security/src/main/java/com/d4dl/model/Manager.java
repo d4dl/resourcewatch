@@ -47,7 +47,6 @@ public class Manager extends BaseEntity {
 	public Manager() {}
 
 	public Manager(String name, String password, String... roles) {
-
 		this.name = name;
 		this.setPassword(password);
 		this.roles = roles;

@@ -342,13 +342,12 @@ class OrderIncidents extends React.Component {
                       <table className="table table-striped table-bordered table-hover dataTable no-footer" id="dataTables-example" role="grid" aria-describedby="dataTables-example_info">
                         <thead>
                           <tr role="row">
-                            <th className="sorting_asc" tabIndex="0" aria-controls="dataTables-example" rowSpan="1" colSpan="1" aria-label="Source" aria-sort="ascending" style={ {width: 265} }>Source</th>
-                            <th className="sorting" tabIndex="0" aria-controls="dataTables-example" rowSpan="1" colSpan="1" aria-label="Action" style={ {width: 122} }>Action</th>
-                            <th className="sorting" tabIndex="0" aria-controls="dataTables-example" rowSpan="1" colSpan="1" aria-label="Transaction Id" style={ {width: 299} }>TransactionId</th>
-                            <th className="sorting" tabIndex="0" aria-controls="dataTables-example" rowSpan="1" colSpan="1" aria-label="Amount" style={ {width: 231} }>Amount</th>
-                            <th className="sorting" tabIndex="0" aria-controls="dataTables-example" rowSpan="1" colSpan="1" aria-label="Description" style={ {width: 180} }>Description</th>
-                            <th className="sorting" tabIndex="0" aria-controls="dataTables-example" rowSpan="1" colSpan="1" aria-label="Description" style={ {width: 180} }>Update</th>
-                            <th className="sorting" tabIndex="0" aria-controls="dataTables-example" rowSpan="1" colSpan="1" aria-label="Description" style={ {width: 180} }>Delete</th>
+                            <th className="sorting" tabIndex="0" aria-controls="dataTables-example" rowSpan="1" colSpan="1" aria-label="Status" style={ {width: 131} }>Order</th>
+                            <th className="sorting" tabIndex="0" aria-controls="dataTables-example" rowSpan="1" colSpan="1" aria-label="Status" style={ {width: 91} }>Type</th>
+                            <th className="sorting" tabIndex="0" aria-controls="dataTables-example" rowSpan="1" colSpan="1" aria-label="Status" style={ {width: 31} }>Is Manual</th>
+                            <th className="sorting" tabIndex="0" aria-controls="dataTables-example" rowSpan="1" colSpan="1" aria-label="Status" style={ {width: 41} }>Status</th>
+                            <th className="sorting" tabIndex="0" aria-controls="dataTables-example" rowSpan="1" colSpan="1" aria-label="Status" style={ {width: 231} }>Description</th>
+                            <th className="sorting" tabIndex="0" aria-controls="dataTables-example" rowSpan="1" colSpan="1" aria-label="Status" style={ {width: 231} }>Log</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -375,10 +374,8 @@ class OrderIncidents extends React.Component {
                 </div>
               </div>
              	<Well> 
-                <h4>DataTables Usage Information</h4> 
-                <p>DataTables is a very flexible, advanced tables plugin for jQuery.  <a target="_blank" href="https://datatables.net/">'https://datatables.net/'</a>.</p>
-                <Button bsSize="large" block href="https://datatables.net/">View DataTables Documentation</Button> 
-              </Well> 
+                <h4>Usage Information</h4>
+              </Well>
             </div>
           </Panel>
         </div>

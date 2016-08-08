@@ -33,6 +33,7 @@ public class OrderIncident extends BaseEntity {
 
     private IncidentType type;
     private String status;
+    private String log;
     private String description;
     private String cartOrderSystemQualifier;
 

@@ -34,16 +34,24 @@ class D4DL_ResourceWatch_Model_Export
         error_log("Exporting order: " . json_encode($details, JSON_PRETTY_PRINT));
         error_log("Types are: " . json_encode($typeDetails, JSON_PRETTY_PRINT));
 
+
+        $jsonOrder = Mage::helper('core')->jsonEncode($order);
+        error_log("The mage order " . json_encode(json_decode($jsonOrder), JSON_PRETTY_PRINT));
+
         if(get_class($order) == 'Mage_Sales_Model_Order') {
             $orderDetails = array(
-                "cartOrder"=>array(
-                    "cartSystemId"=>$order->getRealOrderId(),
+                    "transactionId"=>$order->getRealOrderId(),
+                    "cartOrderSystemId"=>$order->getRealOrderId(),
+                    'shoppingCartId' => 'demoMagentoDrupalStore',
+                    'shoppingCartType' => 'magento_commerce_rest',
+                    'shoppingCartName' => 'D4DL Magento Store',
+                    'email' => $jsonOrder->customer_email,
                     "amount"=>$order->getTotalDue(),
-                    'siteName'=>'Magento Drupal Store',
-                    'tenantId'=>'magentoDemo',
+                    'siteName'=>'Magento D4dl Store',
+                    'tenantId'=>'magentoDemoClient',
+                    'orderTag' => 'cart',
                     'processDefinitionKey' => Mage::getStoreConfig(self::RESOURCE_WATCH_PROCESS_KEY),
-                ),
-                "status"=>$order->getStatusLabel(),
+                    "status"=>$order->getStatusLabel()
             );
             $this->_getHelper()->_postOrderDetails(Mage::getStoreConfig(self::RESOURCE_WATCH_ENDPOINT), $orderDetails);
         } else {

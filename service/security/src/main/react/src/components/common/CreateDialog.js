@@ -43,7 +43,6 @@ class CreateDialog extends React.Component {
         return (
             <div>
                 <Button bsStyle="primary" bsSize="medium" onClick={this.open} >
-                    Create New
                 </Button>
                 <Modal show={this.state.showModal} onHide={this.close}>
                     <Modal.Header closeButton>
