@@ -156,14 +156,9 @@ var HomePage = React.createClass({
                   <MenuItem eventKey="2">
                     <i className="fa fa-gear fa-fw"></i> Settings
                   </MenuItem> 
-                  <MenuItem eventKey="3">
-                    <a href="http://www.strapui.com/" onClick={ () => { window.location='http://www.strapui.com/'; } }>
-                      <i className="fa fa-eye fa-fw"></i> Premium React Themes
-                    </a>
-                  </MenuItem> 
                   <MenuItem divider />
                   <MenuItem eventKey="4">
-                    <Link to="login">
+                    <Link to="logout">
                       <i className="fa fa-sign-out fa-fw"></i> Logout
                     </Link>
                   </MenuItem>

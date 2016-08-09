@@ -4,7 +4,7 @@ var Router = require('react-router');
 var LogoutPage = React.createClass({
     
   componentWillMount: function(){
-
+    location.href = "/logout";
   },
   
   mixins: [Router.Navigation],

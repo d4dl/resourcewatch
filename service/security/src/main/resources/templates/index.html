@@ -7,16 +7,16 @@
 </head>
 <body>
     <div>
-        Hello, <span th:text="${#authentication.name}">user</span>.
-        <form th:action="@{/logout}" method="post">
-            <input type="submit" value="Log Out"/>
-        </form>
+        <span style="height: 0; width: 0; left: -90px; position: absolute" id="authenticator" th:text="${#authorization.expression('isAuthenticated()')}"></span>.
     </div>
     <div id="app"></div>
 
-    <script>
-        // Set to 'true' to activate logged-in routes
-        user = false;
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        var isAuthenticated = document.getElementById("authenticator").innerHTML
+
+        /*]]>*/
     </script>
 
     <script src="app.js"></script>

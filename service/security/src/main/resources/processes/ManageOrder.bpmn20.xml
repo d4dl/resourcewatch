@@ -3,11 +3,21 @@
   <process id="eu_fraud_wary_process" isExecutable="true">
     <startEvent id="sid-F11B7DB7-83C1-41AD-A5F9-B7C0380580F6"/>
     <userTask id="sid-9ACE88AC-5849-4F2B-9904-7D066115B777" name="Approve" activiti:candidateGroups="ORDER_PROCESSOR"/>
-    <userTask id="sid-013438D7-E919-48FF-AACF-8E089E599841" name="Refund"/>
+    <userTask id="sid-013438D7-E919-48FF-AACF-8E089E599841" name="Cancel" activiti:candidateGroups="ORDER_PROCESSOR">
+      <extensionElements>
+        <activiti:taskListener event="complete" delegateExpression="${updateOrderStatusTask}">
+          <activiti:field name="status">
+            <activiti:string><![CDATA[canceled]]></activiti:string>
+          </activiti:field>
+        </activiti:taskListener>
+      </extensionElements>
+    </userTask>
     <sequenceFlow id="sid-603C00ED-FDA6-42A4-8C26-FD20186EA744" sourceRef="sid-BECDA1C3-C4DD-4D77-A572-DD2E49B32E53" targetRef="sid-013438D7-E919-48FF-AACF-8E089E599841"/>
     <parallelGateway id="sid-BECDA1C3-C4DD-4D77-A572-DD2E49B32E53"/>
     <sequenceFlow id="sid-F97BC877-B066-4E12-AC62-B47BC3D55C29" sourceRef="sid-F11B7DB7-83C1-41AD-A5F9-B7C0380580F6" targetRef="sid-BECDA1C3-C4DD-4D77-A572-DD2E49B32E53"/>
-    <endEvent id="sid-2E344F8D-12E5-46E9-821F-7ABFAF5D81FD"/>
+    <endEvent id="sid-2E344F8D-12E5-46E9-821F-7ABFAF5D81FD">
+      <terminateEventDefinition activiti:terminateAll="true"></terminateEventDefinition>
+    </endEvent>
     <sequenceFlow id="sid-2FA1A6D9-8F88-47E6-8983-8CC3E7C6D646" sourceRef="sid-013438D7-E919-48FF-AACF-8E089E599841" targetRef="sid-2E344F8D-12E5-46E9-821F-7ABFAF5D81FD"/>
     <sequenceFlow id="sid-0DD519BC-D8B5-4D76-94D7-7480BAA93D8A" sourceRef="sid-BECDA1C3-C4DD-4D77-A572-DD2E49B32E53" targetRef="sid-AE5E5D6B-BF07-4F8F-AABA-8D8B3F15985A"/>
     <exclusiveGateway id="sid-AE5E5D6B-BF07-4F8F-AABA-8D8B3F15985A" name="Whitelisted"  default="sid-A3D3694C-82DE-4998-A23E-CCB60F4ECDB9"/>

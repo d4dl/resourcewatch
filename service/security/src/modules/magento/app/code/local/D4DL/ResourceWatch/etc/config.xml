@@ -19,7 +19,27 @@
             </resourcewatch>
         </helpers>
         <events>
-            <!-- -->
+            <!--
+            checkout_cart_add_product_complete
+            controller_action_postdispatch_checkout_cart_index
+            controller_action_postdispatch_checkout_onepage_index
+            controller_action_postdispatch_checkout
+            sales_quote_address_collection_load_after
+            controller_action_predispatch_checkout_onepage_saveShippingMethod
+            sales_quote_payment_save_commit_after
+            sales_quote_payment_save_commit_after
+            controller_action_postdispatch_checkout_onepage_savePayment
+            payment_info_block_prepare_specific_information
+            controller_action_postdispatch_paypal
+            controller_action_layout_render_before_checkout_onepage_success
+            controller_action_postdispatch_paypal_express_saveShippingMethod
+            sales_order_payment_capture
+            sales_order_payment_place_end
+            sales_order_payment_save_after
+            sales_order_payment_transaction_save_after
+            controller_action_postdispatch_paypal_ipn_index
+            controller_action_postdispatch_paypal
+            -->
             <sales_order_payment_pay>
                 <observers>
                     <d4dl_resourcewatch_payment_pay>
