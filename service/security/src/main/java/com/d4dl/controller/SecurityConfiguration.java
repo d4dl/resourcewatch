@@ -52,7 +52,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers("/built/**", "/main.css").permitAll()
 				.anyRequest().authenticated()
 				.and()
-			.formLogin()
+			.formLogin()//.loginPage("/")
 				.defaultSuccessUrl("/", true)
 				.permitAll()
 				.and()

@@ -178,7 +178,7 @@ function _d4dl_resource_watch_fetch_order($order_id)
 function d4dl_resource_watch_commerce_payment_transaction_presave($payment) {
     $currentOrder = _d4dl_resource_watch_fetch_order($payment->order_id);
     if($currentOrder) {
-        error_log("Payment information\n " . json_encode($payment, JSON_PRETTY_PRINT));
+        //error_log("Payment information\n " . json_encode($payment, JSON_PRETTY_PRINT));
         $message_variables = $payment->message_variables;
         $payload = (object)array(
             'ccLastFour'           => substr($message_variables['@number'], -4),
@@ -258,12 +258,13 @@ function _d4dl_resource_watch_post_payload($payload, $entityRef, $method="POST")
         'headers' => array('Content-Type' => 'application/json', 'Authorization' => 'Basic ' . HARD_CODED_AUTHORIZATION . ''),
         'data' => json_encode($payload)
     );
-    error_log("Sending resource request to $url\n " . json_encode($options, JSON_PRETTY_PRINT));
+    //error_log("Sending resource request to $url\n " . json_encode($options, JSON_PRETTY_PRINT));
+    error_log("Sending resource request to $url");
     $responseObject = drupal_http_request($url, $options);
     if($responseObject->code == "404") {
        return null;
     } else {
-        error_log("Module received response object \n" . json_encode($responseObject, JSON_PRETTY_PRINT));
+        //error_log("Module received response object \n" . json_encode($responseObject, JSON_PRETTY_PRINT));
         if(is_object($responseObject) && isset($responseObject->data)) {
             return json_decode($responseObject->data, false);
         } else {
@@ -309,8 +310,8 @@ function d4dl_resource_watch_update() {
     $received = json_decode($received, false);
     $order = commerce_order_load($received->cartOrderSystemId);
     // Do not update the status if the order is already at it.
-    error_log("The Module Debugging order:\n" . json_encode($order, JSON_PRETTY_PRINT));
-    error_log("Debugging received:\n" . json_encode($received, JSON_PRETTY_PRINT));
+    //error_log("The Module Debugging order:\n" . json_encode($order, JSON_PRETTY_PRINT));
+    //error_log("Debugging received:\n" . json_encode($received, JSON_PRETTY_PRINT));
     if ($order->status != $received->status) {
         $updated = commerce_order_status_update($order, $received->status, FALSE, TRUE, "D4DL Auto Status update to " . $received->status);
         //$updated = commerce_order_status_update($order, 'pending', FALSE, TRUE, "D4DL Auto Status update to " . $received->status);

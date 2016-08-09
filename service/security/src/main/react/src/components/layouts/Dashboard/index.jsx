@@ -47,7 +47,7 @@ var HomePage = React.createClass({
     return (
         <div id="wrapper" className="content">
 
-          <Navbar brand={<span><img src={require('../../../common/img/logo.png')} alt="Start React" title="Start React" />
+          <Navbar brand={<span><img src={require('../../../common/img/watch-logo26_26.png')} alt="Resource Watch" title="Resource Watch" />
             <span>&nbsp;DeFord Logistics - Resource Watch </span>
             <button type="button" className="navbar-toggle" onClick={this.toggleMenu} style={{position: 'absolute', right: 0, top: 0}}>
               <span className="sr-only">Toggle navigation</span>

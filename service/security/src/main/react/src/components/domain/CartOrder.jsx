@@ -20,7 +20,7 @@ class CartOrder extends React.Component {
       }
     });
 
-    if(this.props.cartOrder.entity.ccLastFour && this.props.cartOrder.entity.email && !this.props.cartOrder.entity.isWhitelisted) {
+    if(this.props.cartOrder.entity.ccLastFour && this.props.cartOrder.entity.email && !this.props.cartOrder.entity.whitelisted) {
       whitelistButton = <ConfirmWhitelistDialog toUpdate={this.props.cartOrder} attributes={this.props.attributes}
                                                 onUpdate={this.props.onUpdate}/>
       console.log("Creating whitelist button");

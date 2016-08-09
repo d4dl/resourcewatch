@@ -63,7 +63,7 @@ public class OrderEventHandler {
 
 	@HandleAfterCreate
 	public void newCartOrder(CartOrder incomingOrder) {
-		Logger.getLogger(this.getClass().getName()).info("Starting process instance for " + incomingOrder);
+		Logger.getLogger(this.getClass().getName()).info("Starting process instance for order with status: " + incomingOrder.getStatus());
 
 		CartOrder newOrder = orderRepository.save(incomingOrder);
 
@@ -79,7 +79,7 @@ public class OrderEventHandler {
 	@HandleBeforeSave
     @HandleBeforeCreate
 	public void saveCartOrder(CartOrder incomingOrder) {
-        Logger.getLogger(this.getClass().getName()).info("Saving cart order: " + incomingOrder);
+        Logger.getLogger(this.getClass().getName()).info("Saving cart order. Status: " + incomingOrder.getStatus());
 		CartOrder existingOrder = orderRepository.findByTenantIdAndShoppingCartIdAndCartOrderSystemId(
 				incomingOrder.getTenantId(),
 				incomingOrder.getShoppingCartId(),
@@ -115,10 +115,10 @@ public class OrderEventHandler {
                 existingOrder.whiteListCCAndEmail(whitelistAttributeRepository);
                 incomingOrder.setWhitelisted(true);
             }
-            if(!incomingOrder.isWhitelisted() && incomingOrder.determineCCAndEmailWhitelisting(whitelistAttributeRepository)) {
-                existingOrder.setWhitelisted(true);
-                incomingOrder.setWhitelisted(true);
-                this.orderRepository.save(existingOrder);
+            if(!incomingOrder.isWhitelisted() && incomingOrder.couldWhitelist()) {
+                if(incomingOrder.determineCCAndEmailWhitelisting(whitelistAttributeRepository)) {
+                    incomingOrder.setWhitelisted(true);
+                }
             }
         }
         if(HARD_CODED_STATUS.equalsIgnoreCase(incomingOrder.getStatus())) {

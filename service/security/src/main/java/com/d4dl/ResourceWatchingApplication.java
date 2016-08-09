@@ -96,16 +96,16 @@ public class ResourceWatchingApplication implements RepositoryRestConfigurer {
 
 			public void validate(Object target, Errors errors) {
 				CartOrder incomingOrder = (CartOrder) target;
-				Logger.getLogger(getClass().getName()).info("Validating cartOrder " + incomingOrder.getId() + " " + incomingOrder.getStatus());
+				//Logger.getLogger(getClass().getName()).info("Validating cartOrder " + incomingOrder.getId() + " " + incomingOrder.getStatus());
 				CartOrder existingOrder = orderRepository.findByTenantIdAndShoppingCartIdAndCartOrderSystemId(
 						incomingOrder.getTenantId(),
 						incomingOrder.getShoppingCartId(),
 						incomingOrder.getCartOrderSystemId());
 				if(existingOrder != null) {
 					Logger.getLogger(getClass().getName()).info("cartOrder found" + target);
-					errors.reject("ORDER_ALREADY_EXISTS", "The order already exists. No big deal. Not creating it." + incomingOrder);
+					errors.reject("ORDER_ALREADY_EXISTS", "The order already exists. Not creating it." + incomingOrder);
 				} else {
-					Logger.getLogger(getClass().getName()).info("cartOrder not found" + target);
+					//Logger.getLogger(getClass().getName()).info("cartOrder not found" + target);
 				}
 
 				if(incomingOrder.getTenantId() == null ||

@@ -89,18 +89,15 @@ public class CartOrder extends BaseEntity {
 
     @JsonIgnore
     public void whiteListCCAndEmail(WhitelistAttributeRepository whitelistAttributeRepository) {
-        String orderEmail = getOrderEmail();
-        if (ccLastFour == null || orderEmail == null) {
+        if (!couldWhitelist()) {
             return;
         }
+        whitelistAttributeRepository.save(new WhitelistAttribute(customer, "ccLastFour", ccLastFour));
+        whitelistAttributeRepository.save(new WhitelistAttribute(customer, "email", getOrderEmail()));
+    }
 
-        Map<String, String> attrMap = fetchCCEmailWhitelistMap(orderEmail, whitelistAttributeRepository);
-        if (!ccLastFour.equals(attrMap.get("ccLastFour"))) {
-            whitelistAttributeRepository.save(new WhitelistAttribute(customer, "ccLastFour", ccLastFour));
-        }
-        if (orderEmail.equals(attrMap.get("email"))) {
-            whitelistAttributeRepository.save(new WhitelistAttribute(customer, "email", email));
-        }
+    public boolean couldWhitelist() {
+        return getOrderEmail() != null && ccLastFour != null;
     }
 
     @JsonIgnore
