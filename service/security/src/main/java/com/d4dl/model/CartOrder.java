@@ -41,6 +41,8 @@ public class CartOrder extends BaseEntity {
     private String tenantId;
     private boolean shouldWhitelist;
     private boolean isWhitelisted;
+    private String shippingCarrier;
+    private String customerName;
     private String shippingAddress;
     private String billingAddress;
     private boolean workflowComplete;
