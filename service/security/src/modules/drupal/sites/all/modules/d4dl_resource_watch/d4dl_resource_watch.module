@@ -201,6 +201,8 @@ function _d4dl_resource_watch_create_d4dl_order_payload($entity)
 {
     $status = $entity->status;
     $status_title = commerce_order_statuses()[$status]['title'];
+    $order = commerce_order_load($entity->order_id);
+    global $base_root;
     $payload = array(
         'transactionId'        => $entity->order_number,
         'tenantId'             => 'drupalDemoClient',
@@ -210,6 +212,7 @@ function _d4dl_resource_watch_create_d4dl_order_payload($entity)
         'status'               => isset($status_title) ? $status_title : $status,
         'log'                  => $entity->log,
         'orderTag'             => 'cart',
+        'url'                  => $base_root . commerce_order_get_properties($entity, array(), "edit_url"),
         'shoppingCartType'     => 'drupal_commerce_rest',
         'shoppingCartName'     => 'D4DL Drupal Store',
         'siteName'             => 'D4DL Drupal Store',

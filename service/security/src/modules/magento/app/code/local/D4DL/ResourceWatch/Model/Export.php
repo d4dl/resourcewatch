@@ -38,10 +38,12 @@ class D4DL_ResourceWatch_Model_Export
             $this->debugJson("Order is set on the data array ", $payment->toJson());
             $orderPayment = $payment->getOrder();
         }
+        /**
         $this->debug("Shipping carrier: " . $order->getShippingCarrier());
         $this->debug("Status : " . $order->getStatusLabel());
         $this->debug("Total Due : " . $order->getTotalDue());
         $this->debug("Customer : " . $order->getCustomerName());
+         */
 
         $jsonOrder = Mage::helper('core')->jsonEncode($order);
         if(isset($order)) {
@@ -61,9 +63,9 @@ class D4DL_ResourceWatch_Model_Export
                     'shoppingCartId' => 'demoMagentoDrupalStore',
                     'shoppingCartType' => 'magento_commerce_rest',
                     'shoppingCartName' => 'D4DL Magento Store',
-                    'email' => $jsonOrder->customer_email,
-                    "amount"=>$order->getCustomerEmail(),
-                    "shippingAddress"=>$shippingAddress->getData(),
+                    "amount"=>$order->getTotalDue(),
+                    "email"=>$order->getCustomerEmail(),
+                    //"shippingAddress"=>$shippingAddress->getData(),
                     "customerName"=>$order->getCustomerName(),
                     'siteName'=>'Magento D4dl Store',
                     'tenantId'=>'magentoDemoClient',
@@ -91,11 +93,13 @@ class D4DL_ResourceWatch_Model_Export
      */
     public function debugObject($message, $toDebug)
     {
+        /**
         ob_start();
         var_dump($toDebug);
         $contents = ob_get_contents();
         ob_end_clean();
         error_log($message . "\ndebugObject\n" . $contents, 3, '/usr/www/users/d4dl/remanplanet.com/magento/var/log/eventsd4dl.log');
+         */
     }
 }
 
